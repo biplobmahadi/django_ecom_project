@@ -40,6 +40,9 @@ router = routers.DefaultRouter()
 # router.register(r'my-order', views.MyOrderViewSet)
 
 urlpatterns = [
+path('password-reset/confirm/<uidb64>/<token>/',
+        TemplateView.as_view(),
+        name='password_reset_confirm'),
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
 
@@ -77,9 +80,9 @@ urlpatterns = [
     path('my-order/<int:pk>/', views.MyOrderRetrieveUpdate.as_view()),
 
     # only registered user email can get the email, others can't get the email... it's awesome!!!
-    url(r'^password-reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
-        TemplateView.as_view(),
-        name='password_reset_confirm'),
+  #  url(r'^password-reset/confirm/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+  #      TemplateView.as_view(),
+  #      name='password_reset_confirm'),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('rest-auth/', include('rest_auth.urls')),

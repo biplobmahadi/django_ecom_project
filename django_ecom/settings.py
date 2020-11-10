@@ -176,6 +176,10 @@ REST_AUTH_SERIALIZERS = {
         'all.serializers.PasswordResetSerializer',
 }
 
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'all.serializers.MyRegisterSerializer',
+}
+
 ACCOUNT_ADAPTER = 'all.adapter.DefaultAccountAdapterCustom'
 URL_FRONT = 'http://localhost:3000/'
 

@@ -7,6 +7,18 @@ from rest_auth.serializers import UserDetailsSerializer
 from django.contrib.auth.forms import PasswordResetForm
 from django.conf import settings
 from django.utils.translation import gettext as _
+from rest_auth.registration.serializers import RegisterSerializer
+
+
+class MyRegisterSerializer(RegisterSerializer):
+
+  first_name = serializers.CharField(required=True)
+  last_name = serializers.CharField(required=True)
+
+  def custom_signup(self, request, user):
+    user.first_name = self.validated_data.get('first_name', '')
+    user.last_name = self.validated_data.get('last_name', '')
+    user.save(update_fields=['first_name', 'last_name'])
 
 
 class PasswordResetSerializer(serializers.Serializer):
