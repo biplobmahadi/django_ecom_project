@@ -112,7 +112,7 @@ class Product(models.Model):
     in_stock = models.BooleanField(default=True)
     details = models.TextField(max_length=500)
     # details field will redesign after everything in product
-    video_details = models.URLField(max_length=50, help_text='provide a youtube link')
+    video_details = models.URLField(help_text='provide a youtube link')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -165,8 +165,8 @@ class Rating(models.Model):
 
 
 class VideoReview(models.Model):
-    link = models.URLField(max_length=50)
-    rating_star = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    link = models.URLField(help_text='provide a youtube link')
+    # rating_star = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='video_review')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -179,12 +179,14 @@ class VideoReviewCount(models.Model):
     video_review = models.OneToOneField(VideoReview, on_delete=models.CASCADE)
     agreed = models.PositiveIntegerField(default=0)
     disagreed = models.PositiveIntegerField(default=0)
+    user = models.ManyToManyField(User, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'Video Review PK: -> {self.video_review.id}'
 
-#have a problem here
+# have a problem here
+# solved
 
 @receiver(post_save, sender=VideoReview)
 def create_video_review_count(sender, instance, created, **kwargs):

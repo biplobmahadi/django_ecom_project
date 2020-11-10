@@ -40,9 +40,7 @@ router = routers.DefaultRouter()
 # router.register(r'my-order', views.MyOrderViewSet)
 
 urlpatterns = [
-path('password-reset/confirm/<uidb64>/<token>/',
-        TemplateView.as_view(),
-        name='password_reset_confirm'),
+    path('password-reset/confirm/<uidb64>/<token>/', TemplateView.as_view(), name='password_reset_confirm'),
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
 
