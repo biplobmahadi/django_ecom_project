@@ -90,7 +90,7 @@ urlpatterns = [
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('rest-auth/facebook/', views.FacebookLogin.as_view(), name='fb_login'),
     path('rest-auth/google/', views.GoogleLogin.as_view(), name='google_login'),
-    path('accounts/', include('allauth.urls'), name='socialaccount_signup'),
+    path('rest-auth/social-signup/', TemplateView.as_view(), name='socialaccount_signup'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

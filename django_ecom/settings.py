@@ -25,7 +25,7 @@ SECRET_KEY = 'r)118t_bu&3epv=-!c^65h40(^3018&^k2^+g6y^ln#uv4-@sv'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -143,10 +143,10 @@ MEDIA_URL = '/media/'
 PHONENUMBER_DB_FORMAT = 'NATIONAL'
 PHONENUMBER_DEFAULT_REGION = 'BD'
 
-AUTHENTICATION_BACKENDS = (
-    'django.contrib.auth.backends.ModelBackend',
-    'allauth.account.auth_backends.AuthenticationBackend',
-)
+# AUTHENTICATION_BACKENDS = (
+#     'django.contrib.auth.backends.ModelBackend',
+#     'allauth.account.auth_backends.AuthenticationBackend',
+# )
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
@@ -158,6 +158,7 @@ REST_FRAMEWORK = {
 }
 
 CORS_ORIGIN_WHITELIST = ('http://localhost:3000', 'https://localhost:3000')
+CORS_ALLOW_ALL_ORIGINS = True
 
 # ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 ACCOUNT_EMAIL_REQUIRED = True

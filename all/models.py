@@ -31,7 +31,7 @@ AREA_SELECT = (
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # custom fields for user
-    full_name = models.CharField(max_length=100, blank=True, null=True)
+    # full_name = models.CharField(max_length=100, blank=True, null=True)
     phone = PhoneNumberField(blank=True, null=True)
     division = models.CharField(max_length=100, choices=DIVISION_SELECT, blank=True, null=True)
     city = models.CharField(max_length=100, choices=CITY_SELECT, blank=True, null=True)
@@ -285,6 +285,7 @@ class MyOrder(models.Model):
 
 class BackgroudImage(models.Model):
     image = models.ImageField(upload_to='background_image')
+    is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

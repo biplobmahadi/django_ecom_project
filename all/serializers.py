@@ -51,7 +51,7 @@ class PasswordResetSerializer(serializers.Serializer):
 
 
 class UserSerializer(UserDetailsSerializer):
-    full_name = serializers.CharField(source="userprofile.full_name", allow_blank=True)
+    # full_name = serializers.CharField(source="userprofile.full_name", allow_blank=True)
     phone = PhoneNumberField(source="userprofile.phone", allow_blank=True)
     DIVISION_SELECT = (
         ('Dhaka', 'Dhaka'),
@@ -77,11 +77,11 @@ class UserSerializer(UserDetailsSerializer):
     address = serializers.CharField(source="userprofile.address", style={'base_template': 'textarea.html'}, allow_blank=True)
 
     class Meta(UserDetailsSerializer.Meta):
-        fields = UserDetailsSerializer.Meta.fields + ('full_name', 'phone', 'division', 'city', 'area', 'address')
+        fields = UserDetailsSerializer.Meta.fields + ('phone', 'division', 'city', 'area', 'address')
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('userprofile', {})
-        full_name = profile_data.get('full_name')
+        # full_name = profile_data.get('full_name')
         phone = profile_data.get('phone')
         division = profile_data.get('division')
         city = profile_data.get('city')
@@ -91,7 +91,7 @@ class UserSerializer(UserDetailsSerializer):
         # get and update user profile
         profile = instance.userprofile
         if profile_data:
-            profile.full_name = full_name
+            # profile.full_name = full_name
             profile.phone = phone
             profile.division = division
             profile.city = city
@@ -200,7 +200,7 @@ class BrandSerializer(serializers.ModelSerializer):
 class BackgroudImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = BackgroudImage
-        fields = ['id', 'image']
+        fields = ['id', 'image', 'is_active']
 
 
 class TrendingSerializer(serializers.ModelSerializer):
