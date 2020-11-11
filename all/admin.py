@@ -18,7 +18,7 @@ class ProductImageInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'price', 'sub_category', 'brand', 'created_at')
+    list_display = ('code', 'name', 'slug', 'price', 'sub_category', 'brand', 'created_at')
 
     fieldsets = (
         ('Product Details', {

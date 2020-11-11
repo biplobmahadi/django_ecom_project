@@ -46,6 +46,7 @@ class ProductList(generics.ListAPIView):
 class ProductRetrieve(generics.RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    lookup_field = 'slug'
 
 
 class CategoryList(generics.ListAPIView):
@@ -58,6 +59,7 @@ class CategoryList(generics.ListAPIView):
 class CategoryRetrieve(generics.RetrieveAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
+    lookup_field = 'slug'
 
 
 class SubCategoryList(generics.ListAPIView):
@@ -68,6 +70,7 @@ class SubCategoryList(generics.ListAPIView):
 class SubCategoryRetrieve(generics.RetrieveAPIView):
     queryset = SubCategory.objects.all()
     serializer_class = SubCategorySerializer
+    lookup_field = 'slug'
 
 
 class BrandList(generics.ListAPIView):
@@ -80,6 +83,7 @@ class BrandList(generics.ListAPIView):
 class BrandRetrieve(generics.RetrieveAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
+    lookup_field = 'slug'
 
 
 class ReviewCountUpdate(generics.UpdateAPIView):
@@ -192,6 +196,7 @@ class TrendingList(generics.ListAPIView):
 class TrendingRetrieve(generics.RetrieveAPIView):
     queryset = Trending.objects.all()
     serializer_class = TrendingSerializer
+    lookup_field = 'slug'
 
 
 class ProductWithQuantityListCreate(generics.ListCreateAPIView):

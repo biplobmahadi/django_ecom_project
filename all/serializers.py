@@ -116,7 +116,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
-        fields = ['id', 'code', 'name', 'price', 'sub_category', 'brand', 'details', 'video_details', 'trending',
+        fields = ['id', 'slug', 'code', 'name', 'price', 'sub_category', 'brand', 'details', 'video_details', 'trending',
                   'product_image', 'in_stock']
         depth = 2
 
@@ -178,7 +178,7 @@ class SubCategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SubCategory
-        fields = ['id', 'category', 'sub_category_name', 'sub_category_img', 'product']
+        fields = ['id', 'slug', 'category', 'sub_category_name', 'sub_category_img', 'product']
 
 
 class CategorySerializer(serializers.ModelSerializer):
@@ -186,7 +186,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'category_name', 'sub_category']
+        fields = ['id', 'slug', 'category_name', 'sub_category']
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -194,7 +194,7 @@ class BrandSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Brand
-        fields = ['id', 'brand_name', 'brand_img', 'product']
+        fields = ['id', 'slug', 'brand_name', 'brand_img', 'product']
 
 
 class BackgroudImageSerializer(serializers.ModelSerializer):
@@ -208,7 +208,7 @@ class TrendingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Trending
-        fields = ['id', 'trend_name', 'trend_img', 'trend_outfit_name', 'trend_outfit_img', 'product']
+        fields = ['id', 'slug', 'trend_name', 'trend_img', 'trend_outfit_name', 'trend_outfit_img', 'product']
 
 
 class ProductWithQuantitySerializer(serializers.ModelSerializer):

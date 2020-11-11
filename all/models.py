@@ -1,4 +1,5 @@
 from django.db import models
+from django.utils.text import slugify
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
@@ -53,6 +54,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Contact(models.Model):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=30)
     email = models.EmailField()
     phone = PhoneNumberField()
@@ -65,46 +67,73 @@ class Contact(models.Model):
 
 
 class Category(models.Model):
-    category_name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
+    category_name = models.CharField(max_length=50, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        value = self.category_name
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'{self.category_name}'
 
 
 class SubCategory(models.Model):
+    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='sub_category')
-    sub_category_name = models.CharField(max_length=50)
+    sub_category_name = models.CharField(max_length=50, unique=True)
     sub_category_img = models.ImageField(upload_to='sub_category_img')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        value = self.sub_category_name
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Category: {self.category} -> Sub-Category: {self.sub_category_name}'
 
 
 class Brand(models.Model):
-    brand_name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
+    brand_name = models.CharField(max_length=50, unique=True)
     brand_img = models.ImageField(upload_to='brand_img')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        value = self.brand_name
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return self.brand_name
 
 
 class Trending(models.Model):
-    trend_name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
+    trend_name = models.CharField(max_length=50, unique=True)
     trend_img = models.ImageField(upload_to='trend_img')
-    trend_outfit_name = models.CharField(max_length=50)
+    trend_outfit_name = models.CharField(max_length=50, unique=True)
     trend_outfit_img = models.ImageField(upload_to='trend_outfit_img')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        value = self.trend_name
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Season: {self.trend_name} -> Outfit: {self.trend_outfit_name}'
 
 
 class Product(models.Model):
+    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
+    slug = models.SlugField(max_length=150, help_text='set a slug for url', unique=True, editable=False)
+    # slug max_lenght more than name because of there price will include
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100, unique=True)
     price = models.IntegerField(validators=[MinValueValidator(0)])
     sub_category = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True, related_name='product')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, related_name='product')
@@ -114,6 +143,11 @@ class Product(models.Model):
     # details field will redesign after everything in product
     video_details = models.URLField(help_text='provide a youtube link')
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        value = self.name + f'-{self.price}' + '-tk'
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
 
     def __str__(self):
         return f'Name: {self.name} -> Price: {self.price}'
@@ -222,6 +256,7 @@ class MyBag(models.Model):
 
 
 class MyOrder(models.Model):
+    # slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
     order_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     my_bag = models.OneToOneField(MyBag, on_delete=models.DO_NOTHING, related_name='my_order')
     sub_total = models.PositiveIntegerField(blank=True, null=True)
