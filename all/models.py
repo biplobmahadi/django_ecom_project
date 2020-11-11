@@ -113,14 +113,14 @@ class Brand(models.Model):
 
 class Trending(models.Model):
     slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
-    trend_name = models.CharField(max_length=50, unique=True)
+    trend_name = models.CharField(max_length=50)
     trend_img = models.ImageField(upload_to='trend_img')
     trend_outfit_name = models.CharField(max_length=50, unique=True)
     trend_outfit_img = models.ImageField(upload_to='trend_outfit_img')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        value = self.trend_name
+        value = self.trend_name + '-' + self.trend_outfit_name
         self.slug = slugify(value, allow_unicode=True)
         super().save(*args, **kwargs)
 

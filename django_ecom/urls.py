@@ -40,7 +40,9 @@ router = routers.DefaultRouter()
 # router.register(r'my-order', views.MyOrderViewSet)
 
 urlpatterns = [
+    # only registered user email can get the email, others can't get the email... it's awesome!!!
     path('password-reset/confirm/<uidb64>/<token>/', TemplateView.as_view(), name='password_reset_confirm'),
+
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
 
