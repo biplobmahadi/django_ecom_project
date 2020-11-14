@@ -91,6 +91,7 @@ urlpatterns = [
     path('rest-auth/facebook/', views.FacebookLogin.as_view(), name='fb_login'),
     path('rest-auth/google/', views.GoogleLogin.as_view(), name='google_login'),
     path('rest-auth/social-signup/', TemplateView.as_view(), name='socialaccount_signup'),
+    path('rest-auth/varification-email-sent/', TemplateView.as_view(), name='account_email_verification_sent'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
