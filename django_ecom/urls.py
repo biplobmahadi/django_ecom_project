@@ -58,6 +58,7 @@ urlpatterns = [
     path('brands/<slug:slug>/', views.BrandRetrieve.as_view()),
     path('reviews-list/', views.ReviewList.as_view()),
     path('reviews-read/', views.ReviewRead.as_view()),
+# this is for to access reviewed product from user pages
     path('reviews-create/', views.ReviewCreate.as_view()),
     path('reviews/<int:pk>/', views.ReviewRetrieveUpdateDestroy.as_view()),
     path('reviews-count-update/<int:pk>/', views.ReviewCountUpdate.as_view()),

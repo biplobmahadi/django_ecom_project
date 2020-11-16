@@ -113,12 +113,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image']
 
 
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        fields = ['id', 'slug', 'code', 'name', 'price', 'sub_category', 'brand', 'details', 'video_details', 'trending',
-                  'product_image', 'in_stock']
-        depth = 2
+
 
 
 class ReviewCountSerializer(serializers.ModelSerializer):
@@ -139,6 +134,35 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'reviewcount']
 
 
+class VideoReviewCountSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = VideoReviewCount
+        fields = '__all__'
+
+
+class VideoReviewSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
+    videoreviewcount = VideoReviewCountSerializer(read_only=True)
+
+    class Meta:
+        model = VideoReview
+        fields = ['id', 'link', 'product', 'user', 'videoreviewcount']
+
+
+class ProductSerializer(serializers.ModelSerializer):
+    review = ReviewSerializer(many=True)
+    video_review = VideoReviewSerializer(many=True)
+
+    class Meta:
+        model = Product
+        fields = ['id', 'slug', 'code', 'name', 'price', 'sub_category', 'brand', 'details', 'video_details', 'trending',
+                  'product_image', 'in_stock', 'review', 'video_review']
+# why don't I get review here
+        depth = 2
+# I change this position in 16 nov
+
+
 class ReviewReadSerializer(ReviewSerializer):
     product = ProductSerializer(read_only=True)
 
@@ -151,22 +175,6 @@ class ReviewReadSerializer(ReviewSerializer):
 #         model = Rating
 #         fields = '__all__'
 #         read_only_fields = ['user']
-
-
-class VideoReviewCountSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = VideoReviewCount
-        fields = '__all__'
-
-
-class VideoReviewSerializer(serializers.ModelSerializer):
-    user = serializers.ReadOnlyField(source='user.userprofile')
-    video_review_count = VideoReviewCountSerializer(read_only=True)
-
-    class Meta:
-        model = VideoReview
-        fields = ['id', 'link', 'rating_star', 'product', 'user', 'video_review_count']
 
 
 class VideoReviewReadSerializer(VideoReviewSerializer):
