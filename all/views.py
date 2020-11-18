@@ -1,12 +1,15 @@
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
-                     Trending, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount)
+                     Trending, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
+                     ReviewCountForAgree, ReviewCountForDisagree)
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, filters
 from .serializers import (ContactSerializer, ProductSerializer, CategorySerializer, BrandSerializer, ReviewSerializer,
                           VideoReviewSerializer, ProductImageSerializer, BackgroudImageSerializer,
                           TrendingSerializer, SubCategorySerializer, ProductWithQuantitySerializer, MyBagSerializer,
                           MyOrderSerializer, ProductWithQuantityReadSerializer, MyBagReadSerializer,
-                          MyOrderReadSerializer, ReviewCountSerializer, VideoReviewCountSerializer, ReviewReadSerializer, VideoReviewReadSerializer)
+                          MyOrderReadSerializer, ReviewCountSerializer, VideoReviewCountSerializer,
+                          ReviewReadSerializer, VideoReviewReadSerializer, ReviewCountForAgreeSerializer,
+                          ReviewCountForDisagreeSerializer)
 
 from rest_framework.permissions import IsAuthenticated
 from all.permissions import IsUserOrReadOnly
@@ -90,6 +93,16 @@ class ReviewCountUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ReviewCount.objects.all()
     serializer_class = ReviewCountSerializer
+
+class ReviewCountForAgreeUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = ReviewCountForAgree.objects.all()
+    serializer_class = ReviewCountForAgreeSerializer
+
+class ReviewCountForDisagreeUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = ReviewCountForDisagree.objects.all()
+    serializer_class = ReviewCountForDisagreeSerializer
 
 
 class ReviewList(generics.ListAPIView):

@@ -1,6 +1,7 @@
 from rest_framework import serializers
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
-                     Trending, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount)
+                     Trending, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
+                     ReviewCountForAgree, ReviewCountForDisagree,)
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.contrib.auth.models import User
 from rest_auth.serializers import UserDetailsSerializer
@@ -123,15 +124,31 @@ class ReviewCountSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class ReviewCountForAgreeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReviewCountForAgree
+        fields = '__all__'
+
+
+class ReviewCountForDisagreeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = ReviewCountForDisagree
+        fields = '__all__'
+
+
 class ReviewSerializer(serializers.ModelSerializer):
     #user = serializers.ReadOnlyField(source='user.userprofile')
     user = UserSerializer(read_only=True)
     # this is for instance
-    reviewcount = ReviewCountSerializer(read_only=True)
+    # reviewcount = ReviewCountSerializer(read_only=True)
+    reviewcountforagree = ReviewCountForAgreeSerializer(read_only=True)
+    reviewcountfordisagree = ReviewCountForDisagreeSerializer(read_only=True)
 
     class Meta:
         model = Review
-        fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'reviewcount']
+        fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'reviewcountforagree', 'reviewcountfordisagree']
 
 
 class VideoReviewCountSerializer(serializers.ModelSerializer):

@@ -173,8 +173,53 @@ class Review(models.Model):
 
 
 class ReviewCount(models.Model):
+    pass
+#
+# class ReviewCount(models.Model):
+#     review = models.OneToOneField(Review, on_delete=models.CASCADE)
+#     agreed = models.PositiveIntegerField(default=0)
+#     disagreed = models.PositiveIntegerField(default=0)
+#     user = models.ManyToManyField(User, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return f'Review PK: -> {self.review.id}'
+#
+#
+# @receiver(post_save, sender=Review)
+# def create_review_count(sender, instance, created, **kwargs):
+#     if created:
+#         ReviewCount.objects.create(review=instance)
+#
+#
+# @receiver(post_save, sender=Review)
+# def save_review_count(sender, instance, **kwargs):
+#     instance.reviewcount.save()
+
+
+class ReviewCountForAgree(models.Model):
     review = models.OneToOneField(Review, on_delete=models.CASCADE)
     agreed = models.PositiveIntegerField(default=0)
+    user = models.ManyToManyField(User, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Review PK: -> {self.review.id}'
+
+
+@receiver(post_save, sender=Review)
+def create_review_count_for_agree(sender, instance, created, **kwargs):
+    if created:
+        ReviewCountForAgree.objects.create(review=instance)
+
+
+@receiver(post_save, sender=Review)
+def save_review_count_for_agree(sender, instance, **kwargs):
+    instance.reviewcountforagree.save()
+
+
+class ReviewCountForDisagree(models.Model):
+    review = models.OneToOneField(Review, on_delete=models.CASCADE)
     disagreed = models.PositiveIntegerField(default=0)
     user = models.ManyToManyField(User, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -184,14 +229,14 @@ class ReviewCount(models.Model):
 
 
 @receiver(post_save, sender=Review)
-def create_review_count(sender, instance, created, **kwargs):
+def create_review_count_for_disagree(sender, instance, created, **kwargs):
     if created:
-        ReviewCount.objects.create(review=instance)
+        ReviewCountForDisagree.objects.create(review=instance)
 
 
 @receiver(post_save, sender=Review)
-def save_review_count(sender, instance, **kwargs):
-    instance.reviewcount.save()
+def save_review_count_for_disagree(sender, instance, **kwargs):
+    instance.reviewcountfordisagree.save()
 
 
 class Rating(models.Model):

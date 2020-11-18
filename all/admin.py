@@ -1,6 +1,7 @@
 from django.contrib import admin
 from .models import (Contact, Product, Category, SubCategory, Brand, Review, Rating, VideoReview, ProductImage,
                      BackgroudImage, Trending, UserProfile, ProductWithQuantity, MyBag, MyOrder, ReviewCount,
+                     ReviewCountForAgree, ReviewCountForDisagree,
                      VideoReviewCount)
 
 
@@ -59,7 +60,9 @@ admin.site.register(SubCategory)
 admin.site.register(Trending)
 admin.site.register(Brand)
 admin.site.register(Review)
-admin.site.register(ReviewCount)
+# admin.site.register(ReviewCount)
+admin.site.register(ReviewCountForAgree)
+admin.site.register(ReviewCountForDisagree)
 # admin.site.register(Rating)
 admin.site.register(VideoReview)
 admin.site.register(VideoReviewCount)

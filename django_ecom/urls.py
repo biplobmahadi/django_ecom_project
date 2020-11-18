@@ -61,7 +61,9 @@ urlpatterns = [
 # this is for to access reviewed product from user pages
     path('reviews-create/', views.ReviewCreate.as_view()),
     path('reviews/<int:pk>/', views.ReviewRetrieveUpdateDestroy.as_view()),
-    path('reviews-count-update/<int:pk>/', views.ReviewCountUpdate.as_view()),
+    # path('reviews-count-update/<int:pk>/', views.ReviewCountUpdate.as_view()),
+    path('reviews-count-for-agree-update/<int:pk>/', views.ReviewCountForAgreeUpdate.as_view()),
+    path('reviews-count-for-disagree-update/<int:pk>/', views.ReviewCountForDisagreeUpdate.as_view()),
     # path('ratings-list/', views.RatingList.as_view()),
     # path('ratings-create/', views.RatingCreate.as_view()),
     # path('ratings/<int:pk>/', views.RatingRetrieveUpdateDestroy.as_view()),
