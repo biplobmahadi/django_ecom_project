@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import (Contact, Product, Category, SubCategory, Brand, Review, Rating, VideoReview, ProductImage,
-                     BackgroudImage, Trending, UserProfile, ProductWithQuantity, MyBag, MyOrder, ReviewCount,
+                     BackgroudImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder, ReviewCount,
                      ReviewCountForAgree, ReviewCountForDisagree,
                      VideoReviewCount)
 
@@ -23,7 +23,7 @@ class ProductAdmin(admin.ModelAdmin):
 
     fieldsets = (
         ('Product Details', {
-            'fields': ('name', 'price', 'details', 'video_details', 'sub_category', 'brand', 'in_stock', 'trending')
+            'fields': ('name', 'price', 'details', 'video_details', 'sub_category', 'brand', 'in_stock', 'trending_outfit')
         }),
     )
 
@@ -58,6 +58,7 @@ admin.site.register(UserProfile)
 admin.site.register(Category)
 admin.site.register(SubCategory)
 admin.site.register(Trending)
+admin.site.register(TrendingOutfit)
 admin.site.register(Brand)
 admin.site.register(Review)
 # admin.site.register(ReviewCount)

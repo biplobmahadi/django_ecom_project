@@ -1,11 +1,11 @@
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
-                     Trending, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
+                     Trending, TrendingOutfit, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
                      ReviewCountForAgree, ReviewCountForDisagree)
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, filters
 from .serializers import (ContactSerializer, ProductSerializer, CategorySerializer, BrandSerializer, ReviewSerializer,
                           VideoReviewSerializer, ProductImageSerializer, BackgroudImageSerializer,
-                          TrendingSerializer, SubCategorySerializer, ProductWithQuantitySerializer, MyBagSerializer,
+                          TrendingSerializer, TrendingOutfitSerializer, SubCategorySerializer, ProductWithQuantitySerializer, MyBagSerializer,
                           MyOrderSerializer, ProductWithQuantityReadSerializer, MyBagReadSerializer,
                           MyOrderReadSerializer, ReviewCountSerializer, VideoReviewCountSerializer,
                           ReviewReadSerializer, VideoReviewReadSerializer, ReviewCountForAgreeSerializer,
@@ -200,15 +200,21 @@ class BackgroudImageList(generics.ListAPIView):
     queryset = BackgroudImage.objects.all()
     serializer_class = BackgroudImageSerializer
 
-
-class TrendingList(generics.ListAPIView):
-    queryset = Trending.objects.all()
-    serializer_class = TrendingSerializer
-
+#
+# class TrendingList(generics.ListAPIView):
+#     queryset = Trending.objects.all()
+#     serializer_class = TrendingSerializer
+#
 
 class TrendingRetrieve(generics.RetrieveAPIView):
     queryset = Trending.objects.all()
     serializer_class = TrendingSerializer
+    lookup_field = 'slug'
+
+
+class TrendingOutfitRetrieve(generics.RetrieveAPIView):
+    queryset = TrendingOutfit.objects.all()
+    serializer_class = TrendingOutfitSerializer
     lookup_field = 'slug'
 
 

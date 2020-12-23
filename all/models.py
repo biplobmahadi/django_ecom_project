@@ -115,17 +115,35 @@ class Trending(models.Model):
     slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
     trend_name = models.CharField(max_length=50)
     trend_img = models.ImageField(upload_to='trend_img')
+    # trend_outfit_name = models.CharField(max_length=50, unique=True)
+    # trend_outfit_img = models.ImageField(upload_to='trend_outfit_img')
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def save(self, *args, **kwargs):
+        value = self.trend_name
+        self.slug = slugify(value, allow_unicode=True)
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f'Season: {self.trend_name}'
+
+
+class TrendingOutfit(models.Model):
+    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
+    # trend_name = models.CharField(max_length=50)
+    # trend_img = models.ImageField(upload_to='trend_img')
+    trending = models.ForeignKey(Trending, on_delete=models.SET_NULL, null=True, related_name='trending_outfit')
     trend_outfit_name = models.CharField(max_length=50, unique=True)
     trend_outfit_img = models.ImageField(upload_to='trend_outfit_img')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
-        value = self.trend_name + '-' + self.trend_outfit_name
+        value = self.trend_outfit_name
         self.slug = slugify(value, allow_unicode=True)
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'Season: {self.trend_name} -> Outfit: {self.trend_outfit_name}'
+        return f'Season: {self.trending.trend_name} -> Outfit: {self.trend_outfit_name}'
 
 
 class Product(models.Model):
@@ -137,7 +155,7 @@ class Product(models.Model):
     price = models.IntegerField(validators=[MinValueValidator(0)])
     sub_category = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True, related_name='product')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, related_name='product')
-    trending = models.ForeignKey(Trending, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
+    trending_outfit = models.ForeignKey(TrendingOutfit, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
     in_stock = models.BooleanField(default=True)
     details = models.TextField(max_length=500)
     # details field will redesign after everything in product

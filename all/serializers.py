@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
-                     Trending, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
+                     Trending, TrendingOutfit, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
                      ReviewCountForAgree, ReviewCountForDisagree,)
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.contrib.auth.models import User
@@ -173,7 +173,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'slug', 'code', 'name', 'price', 'sub_category', 'brand', 'details', 'video_details', 'trending',
+        fields = ['id', 'slug', 'code', 'name', 'price', 'sub_category', 'brand', 'details', 'video_details', 'trending_outfit',
                   'product_image', 'in_stock', 'review', 'video_review']
 # why don't I get review here
         depth = 2
@@ -228,12 +228,20 @@ class BackgroudImageSerializer(serializers.ModelSerializer):
         fields = ['id', 'image', 'is_active']
 
 
-class TrendingSerializer(serializers.ModelSerializer):
+class TrendingOutfitSerializer(serializers.ModelSerializer):
     product = ProductSerializer(many=True)
 
     class Meta:
+        model = TrendingOutfit
+        fields = ['id', 'slug', 'trend_outfit_name', 'trend_outfit_img', 'product']
+
+
+class TrendingSerializer(serializers.ModelSerializer):
+    trending_outfit = TrendingOutfitSerializer(many=True)
+
+    class Meta:
         model = Trending
-        fields = ['id', 'slug', 'trend_name', 'trend_img', 'trend_outfit_name', 'trend_outfit_img', 'product']
+        fields = ['id', 'slug', 'trend_name', 'trend_img', 'trending_outfit']
 
 
 class ProductWithQuantitySerializer(serializers.ModelSerializer):
