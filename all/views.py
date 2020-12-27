@@ -1,15 +1,17 @@
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
-                     Trending, TrendingOutfit, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
-                     ReviewCountForAgree, ReviewCountForDisagree)
+                     Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
+                     ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo,
+                     ProductAvailable)
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, filters
 from .serializers import (ContactSerializer, ProductSerializer, CategorySerializer, BrandSerializer, ReviewSerializer,
                           VideoReviewSerializer, ProductImageSerializer, BackgroudImageSerializer,
-                          TrendingSerializer, TrendingOutfitSerializer, SubCategorySerializer, ProductWithQuantitySerializer, MyBagSerializer,
+                          TrendingSerializer, TrendingOutfitSerializer, ProductWithQuantitySerializer, MyBagSerializer,
                           MyOrderSerializer, ProductWithQuantityReadSerializer, MyBagReadSerializer,
                           MyOrderReadSerializer, ReviewCountSerializer, VideoReviewCountSerializer,
                           ReviewReadSerializer, VideoReviewReadSerializer, ReviewCountForAgreeSerializer,
-                          ReviewCountForDisagreeSerializer)
+                          ReviewCountForDisagreeSerializer, ProductDetailSerializer, YouWillGetSerializer,
+                          ProductInfoSerializer, ProductAvailableSerializer)
 
 from rest_framework.permissions import IsAuthenticated
 from all.permissions import IsUserOrReadOnly
@@ -34,11 +36,33 @@ class ContactCreate(generics.CreateAPIView):
     serializer_class = ContactSerializer
 
 
+class ProductAvailableUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = ProductAvailable.objects.all()
+    serializer_class = ProductAvailableSerializer
+
+
 class ProductImageList(generics.ListAPIView):
     queryset = ProductImage.objects.all()
     serializer_class = ProductImageSerializer
 
 
+class ProductDetailList(generics.ListAPIView):
+    queryset = ProductDetail.objects.all()
+    serializer_class = ProductDetailSerializer
+
+
+class YouWillGetList(generics.ListAPIView):
+    queryset = YouWillGet.objects.all()
+    serializer_class = YouWillGetSerializer
+
+
+class ProductInfoList(generics.ListAPIView):
+    queryset = ProductInfo.objects.all()
+    serializer_class = ProductInfoSerializer
+
+
+# its not need maybe
 class ProductList(generics.ListAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
@@ -52,27 +76,27 @@ class ProductRetrieve(generics.RetrieveAPIView):
     lookup_field = 'slug'
 
 
-class CategoryList(generics.ListAPIView):
-    queryset = Category.objects.all()
-    serializer_class = CategorySerializer
-    filter_backends = [filters.SearchFilter]
-    search_fields = ['category_name']
+# class CategoryList(generics.ListAPIView):
+#     queryset = Category.objects.all()
+#     serializer_class = CategorySerializer
+#     filter_backends = [filters.SearchFilter]
+#     search_fields = ['category_name']
+#
+#
+# class CategoryRetrieve(generics.RetrieveAPIView):
+#     queryset = Category.objects.all()
+#     serializer_class = CategorySerializer
+#     lookup_field = 'slug'
+
+
+# class SubCategoryList(generics.ListAPIView):
+#     queryset = SubCategory.objects.all()
+#     serializer_class = SubCategorySerializer
 
 
 class CategoryRetrieve(generics.RetrieveAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
-    lookup_field = 'slug'
-
-
-class SubCategoryList(generics.ListAPIView):
-    queryset = SubCategory.objects.all()
-    serializer_class = SubCategorySerializer
-
-
-class SubCategoryRetrieve(generics.RetrieveAPIView):
-    queryset = SubCategory.objects.all()
-    serializer_class = SubCategorySerializer
     lookup_field = 'slug'
 
 

@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
-                     Trending, TrendingOutfit, SubCategory, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
-                     ReviewCountForAgree, ReviewCountForDisagree,)
+                     Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
+                     ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo, 
+                     ProductAvailable)
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.contrib.auth.models import User
 from rest_auth.serializers import UserDetailsSerializer
@@ -108,13 +109,35 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'email', 'phone', 'message']
 
 
+class ProductAvailableSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductAvailable
+        fields = '__all__'
+        read_only_fields = ['product']
+        
+
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
         fields = ['id', 'image']
 
 
+class ProductDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductDetail
+        fields = '__all__'
 
+
+class YouWillGetSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = YouWillGet
+        fields = '__all__'
+
+
+class ProductInfoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductInfo
+        fields = '__all__'
 
 
 class ReviewCountSerializer(serializers.ModelSerializer):
@@ -170,11 +193,13 @@ class VideoReviewSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     review = ReviewSerializer(many=True)
     video_review = VideoReviewSerializer(many=True)
+    productavailable = ProductAvailableSerializer(read_only=True)
 
     class Meta:
         model = Product
-        fields = ['id', 'slug', 'code', 'name', 'price', 'sub_category', 'brand', 'details', 'video_details', 'trending_outfit',
-                  'product_image', 'in_stock', 'review', 'video_review']
+        fields = ['id', 'slug', 'code', 'name', 'price', 'category', 'brand', 'details', 'video_details',
+                  'trending_outfit', 'product_image', 'has_size', 'review', 'video_review',
+                  'product_detail', 'you_will_get', 'product_info', 'productavailable']
 # why don't I get review here
         depth = 2
 # I change this position in 16 nov
@@ -198,20 +223,20 @@ class VideoReviewReadSerializer(VideoReviewSerializer):
     product = ProductSerializer(read_only=True)
 
 
-class SubCategorySerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     product = ProductSerializer(many=True)
 
     class Meta:
-        model = SubCategory
-        fields = ['id', 'slug', 'category', 'sub_category_name', 'sub_category_img', 'product']
-
-
-class CategorySerializer(serializers.ModelSerializer):
-    sub_category = SubCategorySerializer(many=True)
-
-    class Meta:
         model = Category
-        fields = ['id', 'slug', 'category_name', 'sub_category']
+        fields = ['id', 'slug', 'category_name', 'category_img', 'product']
+
+
+# class CategorySerializer(serializers.ModelSerializer):
+#     sub_category = SubCategorySerializer(many=True)
+#
+#     class Meta:
+#         model = Category
+#         fields = ['id', 'slug', 'category_name', 'sub_category']
 
 
 class BrandSerializer(serializers.ModelSerializer):

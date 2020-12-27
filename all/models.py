@@ -27,6 +27,16 @@ AREA_SELECT = (
     ('mamaaaa', 'mamaaaa'),
 )
 
+SIZE_SELECT = (
+    ('XS', 'XS'),
+    ('S', 'S'),
+    ('M', 'M'),
+    ('L', 'L'),
+    ('XL', 'XL'),
+    ('XXL', 'XXL'),
+    ('XXXL', 'XXXL'),
+)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -66,9 +76,25 @@ class Contact(models.Model):
         return self.name
 
 
+# class Category(models.Model):
+#     slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
+#     category_name = models.CharField(max_length=50, unique=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#
+#     def save(self, *args, **kwargs):
+#         value = self.category_name
+#         self.slug = slugify(value, allow_unicode=True)
+#         super().save(*args, **kwargs)
+#
+#     def __str__(self):
+#         return f'{self.category_name}'
+
+
 class Category(models.Model):
     slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
-    category_name = models.CharField(max_length=50, unique=True)
+    # category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='sub_category')
+    category_name = models.CharField(max_length=50, unique=True, help_text="eg. (Men's Pant, Women's Shirt, IPhone, Football)")
+    category_img = models.ImageField(upload_to='category_img')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -77,23 +103,7 @@ class Category(models.Model):
         super().save(*args, **kwargs)
 
     def __str__(self):
-        return f'{self.category_name}'
-
-
-class SubCategory(models.Model):
-    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
-    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='sub_category')
-    sub_category_name = models.CharField(max_length=50, unique=True)
-    sub_category_img = models.ImageField(upload_to='sub_category_img')
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def save(self, *args, **kwargs):
-        value = self.sub_category_name
-        self.slug = slugify(value, allow_unicode=True)
-        super().save(*args, **kwargs)
-
-    def __str__(self):
-        return f'Category: {self.category} -> Sub-Category: {self.sub_category_name}'
+        return f'Category: {self.category_name}'
 
 
 class Brand(models.Model):
@@ -153,12 +163,18 @@ class Product(models.Model):
     code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=100, unique=True)
     price = models.IntegerField(validators=[MinValueValidator(0)])
-    sub_category = models.ForeignKey(SubCategory, on_delete=models.SET_NULL, null=True, related_name='product')
+    category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='product')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, related_name='product')
     trending_outfit = models.ForeignKey(TrendingOutfit, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
-    in_stock = models.BooleanField(default=True)
+
+    has_size = models.BooleanField(default=False)
+
     details = models.TextField(max_length=500)
     # details field will redesign after everything in product
+    # product_details_1_title = models.CharField(max_length=100)
+    # product_details_1_title = models.CharField(max_length=100)
+    # product_details_1_title = models.CharField(max_length=100)
+    # product_details_1_value = models.CharField(max_length=100)
     video_details = models.URLField(help_text='provide a youtube link')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -171,12 +187,51 @@ class Product(models.Model):
         return f'Name: {self.name} -> Price: {self.price}'
 
 
+class ProductAvailable(models.Model):
+    available_quantity = models.PositiveIntegerField(default=5)
+    product = models.OneToOneField(Product, on_delete=models.CASCADE)
+    # these relationship is perfect
+
+    def __str__(self):
+        return f'Available -> {self.available_quantity}'
+
+# here, relationship for product for multiple option is perfect
+# when we set available, one product has only one. then the rltn is onetoone
+# but we can set multiple gift, detail, image for one single product thats why they are foreignkey rltn
+
+
+class ProductDetail(models.Model):
+    title = models.CharField(max_length=100)
+    value = models.CharField(max_length=100)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_detail')
+    # these relationship is perfect also
+
+    def __str__(self):
+        return f'{self.title} -> {self.value}'
+
+
 class ProductImage(models.Model):
     image = models.ImageField(upload_to='product_image')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_image')
 
     def __str__(self):
         return f'{self.image}'
+
+
+class YouWillGet(models.Model):
+    gift = models.CharField(max_length=100, help_text='eg. (2 Lottery, One IPhone 12 Max Pro)')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='you_will_get')
+
+    def __str__(self):
+        return f'{self.gift}'
+
+
+class ProductInfo(models.Model):
+    info = models.CharField(max_length=100, help_text='eg. (6 Months Warranty, 3 Month Guaranty)')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_info')
+
+    def __str__(self):
+        return f'{self.info}'
 
 
 class Review(models.Model):
@@ -299,6 +354,7 @@ def save_video_review_count(sender, instance, **kwargs):
 class ProductWithQuantity(models.Model):
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='product_with_quantity')
     quantity = models.PositiveIntegerField(default=1)
+    size = models.CharField(max_length=10, choices=SIZE_SELECT, blank=True)
     cost = models.PositiveIntegerField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import (Contact, Product, Category, SubCategory, Brand, Review, Rating, VideoReview, ProductImage,
+from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage,
                      BackgroudImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder, ReviewCount,
-                     ReviewCountForAgree, ReviewCountForDisagree,
-                     VideoReviewCount)
+                     ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo,
+                     VideoReviewCount, ProductAvailable)
 
 
 @admin.register(Contact)
@@ -17,19 +17,39 @@ class ProductImageInline(admin.TabularInline):
     extra = 3
 
 
+class ProductAvailableInline(admin.TabularInline):
+    model = ProductAvailable
+
+
+class ProductDetailInline(admin.TabularInline):
+    model = ProductDetail
+    extra = 3
+
+
+class YouWillGetInline(admin.TabularInline):
+    model = YouWillGet
+    extra = 3
+
+
+class ProductInfoInline(admin.TabularInline):
+    model = ProductInfo
+    extra = 3
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'slug', 'price', 'sub_category', 'brand', 'created_at')
+    list_display = ('code', 'name', 'slug', 'price', 'category', 'brand', 'created_at')
 
     fieldsets = (
         ('Product Details', {
-            'fields': ('name', 'price', 'details', 'video_details', 'sub_category', 'brand', 'in_stock', 'trending_outfit')
+            'fields': ('name', 'price', 'details', 'video_details', 'category', 'brand',
+                       'has_size', 'trending_outfit')
         }),
     )
 
     list_filter = ('created_at', )
     search_fields = ['code', 'name', 'brand']
-    inlines = [ProductImageInline]
+    inlines = [ProductAvailableInline, ProductImageInline, ProductDetailInline, YouWillGetInline, ProductInfoInline]
 
 
 @admin.register(MyOrder)
@@ -56,7 +76,6 @@ class MyOrderAdmin(admin.ModelAdmin):
 
 admin.site.register(UserProfile)
 admin.site.register(Category)
-admin.site.register(SubCategory)
 admin.site.register(Trending)
 admin.site.register(TrendingOutfit)
 admin.site.register(Brand)
@@ -64,7 +83,7 @@ admin.site.register(Review)
 # admin.site.register(ReviewCount)
 admin.site.register(ReviewCountForAgree)
 admin.site.register(ReviewCountForDisagree)
-# admin.site.register(Rating)
+admin.site.register(ProductAvailable)
 admin.site.register(VideoReview)
 admin.site.register(VideoReviewCount)
 admin.site.register(BackgroudImage)
