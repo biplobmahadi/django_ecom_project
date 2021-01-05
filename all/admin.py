@@ -2,7 +2,7 @@ from django.contrib import admin
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage,
                      BackgroudImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder, ReviewCount,
                      ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo,
-                     VideoReviewCount, ProductAvailable)
+                     VideoReviewCount, ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
 
 
 @admin.register(Contact)
@@ -85,7 +85,9 @@ admin.site.register(ReviewCountForAgree)
 admin.site.register(ReviewCountForDisagree)
 admin.site.register(ProductAvailable)
 admin.site.register(VideoReview)
-admin.site.register(VideoReviewCount)
+# admin.site.register(VideoReviewCount)
+admin.site.register(VideoReviewCountForAgree)
+admin.site.register(VideoReviewCountForDisagree)
 admin.site.register(BackgroudImage)
 admin.site.register(ProductWithQuantity)
 admin.site.register(MyBag)

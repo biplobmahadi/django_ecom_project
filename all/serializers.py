@@ -2,7 +2,7 @@ from rest_framework import serializers
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
                      Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
                      ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo, 
-                     ProductAvailable)
+                     ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.contrib.auth.models import User
 from rest_auth.serializers import UserDetailsSerializer
@@ -140,11 +140,11 @@ class ProductInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ReviewCountSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = ReviewCount
-        fields = '__all__'
+# class ReviewCountSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = ReviewCount
+#         fields = '__all__'
 
 
 class ReviewCountForAgreeSerializer(serializers.ModelSerializer):
@@ -174,20 +174,36 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'reviewcountforagree', 'reviewcountfordisagree']
 
 
-class VideoReviewCountSerializer(serializers.ModelSerializer):
+# class VideoReviewCountSerializer(serializers.ModelSerializer):
+#
+#     class Meta:
+#         model = VideoReviewCount
+#         fields = '__all__'
+
+
+class VideoReviewCountForAgreeSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = VideoReviewCount
+        model = VideoReviewCountForAgree
+        fields = '__all__'
+
+
+class VideoReviewCountForDisagreeSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = VideoReviewCountForDisagree
         fields = '__all__'
 
 
 class VideoReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    videoreviewcount = VideoReviewCountSerializer(read_only=True)
+    # videoreviewcount = VideoReviewCountSerializer(read_only=True)
+    videoreviewcountforagree = VideoReviewCountForAgreeSerializer(read_only=True)
+    videoreviewcountfordisagree = VideoReviewCountForDisagreeSerializer(read_only=True)
 
     class Meta:
         model = VideoReview
-        fields = ['id', 'link', 'product', 'user', 'videoreviewcount']
+        fields = ['id', 'link', 'product', 'user', 'videoreviewcountforagree', 'videoreviewcountfordisagree']
 
 
 class ProductSerializer(serializers.ModelSerializer):

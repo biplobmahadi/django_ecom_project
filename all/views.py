@@ -1,17 +1,18 @@
 from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
                      Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
                      ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo,
-                     ProductAvailable)
+                     ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
 from django.contrib.auth.models import User
 from rest_framework import viewsets, generics, filters
 from .serializers import (ContactSerializer, ProductSerializer, CategorySerializer, BrandSerializer, ReviewSerializer,
                           VideoReviewSerializer, ProductImageSerializer, BackgroudImageSerializer,
                           TrendingSerializer, TrendingOutfitSerializer, ProductWithQuantitySerializer, MyBagSerializer,
                           MyOrderSerializer, ProductWithQuantityReadSerializer, MyBagReadSerializer,
-                          MyOrderReadSerializer, ReviewCountSerializer, VideoReviewCountSerializer,
+                          MyOrderReadSerializer,
                           ReviewReadSerializer, VideoReviewReadSerializer, ReviewCountForAgreeSerializer,
                           ReviewCountForDisagreeSerializer, ProductDetailSerializer, YouWillGetSerializer,
-                          ProductInfoSerializer, ProductAvailableSerializer)
+                          ProductInfoSerializer, ProductAvailableSerializer, VideoReviewCountForAgreeSerializer,
+                          VideoReviewCountForDisagreeSerializer)
 
 from rest_framework.permissions import IsAuthenticated
 from all.permissions import IsUserOrReadOnly
@@ -113,10 +114,10 @@ class BrandRetrieve(generics.RetrieveAPIView):
     lookup_field = 'slug'
 
 
-class ReviewCountUpdate(generics.UpdateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = ReviewCount.objects.all()
-    serializer_class = ReviewCountSerializer
+# class ReviewCountUpdate(generics.UpdateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = ReviewCount.objects.all()
+#     serializer_class = ReviewCountSerializer
 
 class ReviewCountForAgreeUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
@@ -128,7 +129,7 @@ class ReviewCountForDisagreeUpdate(generics.UpdateAPIView):
     queryset = ReviewCountForDisagree.objects.all()
     serializer_class = ReviewCountForDisagreeSerializer
 
-
+# this is not need i think
 class ReviewList(generics.ListAPIView):
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -182,12 +183,25 @@ class ReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
 #     serializer_class = RatingSerializer
 
 
-class VideoReviewCountUpdate(generics.UpdateAPIView):
+# class VideoReviewCountUpdate(generics.UpdateAPIView):
+#     permission_classes = [IsAuthenticated]
+#     queryset = VideoReviewCount.objects.all()
+#     serializer_class = VideoReviewCountSerializer
+
+
+class VideoReviewCountForAgreeUpdate(generics.UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = VideoReviewCount.objects.all()
-    serializer_class = VideoReviewCountSerializer
+    queryset = VideoReviewCountForAgree.objects.all()
+    serializer_class = VideoReviewCountForAgreeSerializer
 
 
+class VideoReviewCountForDisagreeUpdate(generics.UpdateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = VideoReviewCountForDisagree.objects.all()
+    serializer_class = VideoReviewCountForDisagreeSerializer
+
+
+# this is not need i think
 class VideoReviewList(generics.ListAPIView):
     queryset = VideoReview.objects.all()
     serializer_class = VideoReviewSerializer

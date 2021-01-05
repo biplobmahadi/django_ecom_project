@@ -327,28 +327,73 @@ class VideoReview(models.Model):
         return f'Video Review PK: -> {self.id}'
 
 
-class VideoReviewCount(models.Model):
+class VideoReviewCountForAgree(models.Model):
     video_review = models.OneToOneField(VideoReview, on_delete=models.CASCADE)
     agreed = models.PositiveIntegerField(default=0)
-    disagreed = models.PositiveIntegerField(default=0)
     user = models.ManyToManyField(User, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'Video Review PK: -> {self.video_review.id}'
 
-# have a problem here
-# solved
 
 @receiver(post_save, sender=VideoReview)
-def create_video_review_count(sender, instance, created, **kwargs):
+def create_video_review_count_for_agree(sender, instance, created, **kwargs):
     if created:
-        VideoReviewCount.objects.create(video_review=instance)
+        VideoReviewCountForAgree.objects.create(video_review=instance)
 
 
 @receiver(post_save, sender=VideoReview)
-def save_video_review_count(sender, instance, **kwargs):
-    instance.videoreviewcount.save()
+def save_video_review_count_for_agree(sender, instance, **kwargs):
+    instance.videoreviewcountforagree.save()
+
+
+class VideoReviewCountForDisagree(models.Model):
+    video_review = models.OneToOneField(VideoReview, on_delete=models.CASCADE)
+    disagreed = models.PositiveIntegerField(default=0)
+    user = models.ManyToManyField(User, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'Review PK: -> {self.video_review.id}'
+
+
+@receiver(post_save, sender=VideoReview)
+def create_video_review_count_for_disagree(sender, instance, created, **kwargs):
+    if created:
+        VideoReviewCountForDisagree.objects.create(video_review=instance)
+
+
+@receiver(post_save, sender=VideoReview)
+def save_video_review_count_for_disagree(sender, instance, **kwargs):
+    instance.videoreviewcountfordisagree.save()
+
+
+class VideoReviewCount(models.Model):
+    pass
+
+# class VideoReviewCount(models.Model):
+#     video_review = models.OneToOneField(VideoReview, on_delete=models.CASCADE)
+#     agreed = models.PositiveIntegerField(default=0)
+#     disagreed = models.PositiveIntegerField(default=0)
+#     user = models.ManyToManyField(User, blank=True)
+#     created_at = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return f'Video Review PK: -> {self.video_review.id}'
+#
+# # have a problem here
+# # solved
+#
+# @receiver(post_save, sender=VideoReview)
+# def create_video_review_count(sender, instance, created, **kwargs):
+#     if created:
+#         VideoReviewCount.objects.create(video_review=instance)
+#
+#
+# @receiver(post_save, sender=VideoReview)
+# def save_video_review_count(sender, instance, **kwargs):
+#     instance.videoreviewcount.save()
 
 
 class ProductWithQuantity(models.Model):
