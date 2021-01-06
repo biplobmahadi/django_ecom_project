@@ -168,7 +168,8 @@ class Product(models.Model):
     trending_outfit = models.ForeignKey(TrendingOutfit, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
 
     has_size = models.BooleanField(default=False)
-
+    has_trial = models.BooleanField(default=False)
+    
     details = models.TextField(max_length=500)
     # details field will redesign after everything in product
     # product_details_1_title = models.CharField(max_length=100)
@@ -402,6 +403,7 @@ class ProductWithQuantity(models.Model):
     size = models.CharField(max_length=10, choices=SIZE_SELECT, blank=True)
     cost = models.PositiveIntegerField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+    add_as_trial = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

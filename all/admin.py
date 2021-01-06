@@ -43,7 +43,7 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Product Details', {
             'fields': ('name', 'price', 'details', 'video_details', 'category', 'brand',
-                       'has_size', 'trending_outfit')
+                       'has_size', 'has_trial', 'trending_outfit')
         }),
     )
 

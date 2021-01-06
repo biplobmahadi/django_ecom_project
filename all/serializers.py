@@ -214,7 +214,7 @@ class ProductSerializer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = ['id', 'slug', 'code', 'name', 'price', 'category', 'brand', 'details', 'video_details',
-                  'trending_outfit', 'product_image', 'has_size', 'review', 'video_review',
+                  'trending_outfit', 'product_image', 'has_size', 'has_trial', 'review', 'video_review',
                   'product_detail', 'you_will_get', 'product_info', 'productavailable']
 # why don't I get review here
         depth = 2
