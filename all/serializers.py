@@ -1,6 +1,6 @@
 from rest_framework import serializers
-from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage, BackgroudImage,
-                     Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder, ReviewCount, VideoReviewCount,
+from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage, BackgroudImage,
+                     Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder,
                      ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo, 
                      ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
 from phonenumber_field.serializerfields import PhoneNumberField
@@ -12,15 +12,48 @@ from django.utils.translation import gettext as _
 from rest_auth.registration.serializers import RegisterSerializer
 
 
+# division, city, area select choice option set here
+# need to update city and area
+DIVISION_SELECT = (
+    ('Dhaka', 'Dhaka'),
+    ('Chittagong', 'Chittagong'),
+    ('Rajshahi', 'Rajshahi'),
+    ('Khulna', 'Khulna'),
+    ('Sylhet', 'Sylhet'),
+    ('Barisal', 'Barisal'),
+    ('Rangpur', 'Rangpur'),
+    ('Mymensingh', 'Mymensingh'),
+)
+CITY_SELECT = (
+    ('Dhaka', 'Dhaka'),
+    ('Chittagong', 'Chittagong'),
+    ('Rajshahi', 'Rajshahi'),
+    ('Khulna', 'Khulna'),
+    ('Sylhet', 'Sylhet'),
+    ('Barisal', 'Barisal'),
+    ('Rangpur', 'Rangpur'),
+    ('Mymensingh', 'Mymensingh'),
+)
+AREA_SELECT = (
+    ('Dhaka', 'Dhaka'),
+    ('Chittagong', 'Chittagong'),
+    ('Rajshahi', 'Rajshahi'),
+    ('Khulna', 'Khulna'),
+    ('Sylhet', 'Sylhet'),
+    ('Barisal', 'Barisal'),
+    ('Rangpur', 'Rangpur'),
+    ('Mymensingh', 'Mymensingh'),
+)
+
+
 class MyRegisterSerializer(RegisterSerializer):
+    first_name = serializers.CharField(required=True)
+    last_name = serializers.CharField(required=True)
 
-  first_name = serializers.CharField(required=True)
-  last_name = serializers.CharField(required=True)
-
-  def custom_signup(self, request, user):
-    user.first_name = self.validated_data.get('first_name', '')
-    user.last_name = self.validated_data.get('last_name', '')
-    user.save(update_fields=['first_name', 'last_name'])
+    def custom_signup(self, request, user):
+        user.first_name = self.validated_data.get('first_name', '')
+        user.last_name = self.validated_data.get('last_name', '')
+        user.save(update_fields=['first_name', 'last_name'])
 
 
 class PasswordResetSerializer(serializers.Serializer):
@@ -32,9 +65,9 @@ class PasswordResetSerializer(serializers.Serializer):
         if not self.reset_form.is_valid():
             raise serializers.ValidationError(self.reset_form.errors)
 
-        ###### FILTER YOUR USER MODEL ######
+        ###### FILTER USER MODEL ######
         if not User.objects.filter(email=value).exists():
-
+            # if user not register then email will not send
             raise serializers.ValidationError(_('This e-mail address is not registered'))
         return value
 
@@ -44,37 +77,17 @@ class PasswordResetSerializer(serializers.Serializer):
             'use_https': request.is_secure(),
             'from_email': getattr(settings, 'DEFAULT_FROM_EMAIL'),
 
-            ###### USE YOUR TEXT FILE ######
+            ###### USE TEXT FILE ######
             'email_template_name': 'password_reset_email.txt',
-
             'request': request,
         }
         self.reset_form.save(**opts)
 
 
 class UserSerializer(UserDetailsSerializer):
-    # full_name = serializers.CharField(source="userprofile.full_name", allow_blank=True)
     phone = PhoneNumberField(source="userprofile.phone", allow_blank=True)
-    DIVISION_SELECT = (
-        ('Dhaka', 'Dhaka'),
-        ('Chottogram', 'Chottogram'),
-        ('Rajshahi', 'Rajshahi'),
-        ('Sylhet', 'Sylhet'),
-    )
     division = serializers.ChoiceField(source="userprofile.division", choices=DIVISION_SELECT, allow_blank=True)
-    CITY_SELECT = (
-        ('Dhaka', 'Dhaka'),
-        ('Chottogram', 'Chottogram'),
-        ('Rajshahi', 'Rajshahi'),
-        ('Sylhet', 'Sylhet'),
-    )
     city = serializers.ChoiceField(source="userprofile.city", choices=CITY_SELECT, allow_blank=True)
-    AREA_SELECT = (
-        ('Dhaka', 'Dhaka'),
-        ('Chottogram', 'Chottogram'),
-        ('Rajshahi', 'Rajshahi'),
-        ('Sylhet', 'Sylhet'),
-    )
     area = serializers.ChoiceField(source="userprofile.area", choices=AREA_SELECT, allow_blank=True)
     address = serializers.CharField(source="userprofile.address", style={'base_template': 'textarea.html'}, allow_blank=True)
 
@@ -83,7 +96,6 @@ class UserSerializer(UserDetailsSerializer):
 
     def update(self, instance, validated_data):
         profile_data = validated_data.pop('userprofile', {})
-        # full_name = profile_data.get('full_name')
         phone = profile_data.get('phone')
         division = profile_data.get('division')
         city = profile_data.get('city')
@@ -93,7 +105,6 @@ class UserSerializer(UserDetailsSerializer):
         # get and update user profile
         profile = instance.userprofile
         if profile_data:
-            # profile.full_name = full_name
             profile.phone = phone
             profile.division = division
             profile.city = city
@@ -140,13 +151,6 @@ class ProductInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class ReviewCountSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = ReviewCount
-#         fields = '__all__'
-
-
 class ReviewCountForAgreeSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -162,23 +166,14 @@ class ReviewCountForDisagreeSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    #user = serializers.ReadOnlyField(source='user.userprofile')
     user = UserSerializer(read_only=True)
     # this is for instance
-    # reviewcount = ReviewCountSerializer(read_only=True)
     reviewcountforagree = ReviewCountForAgreeSerializer(read_only=True)
     reviewcountfordisagree = ReviewCountForDisagreeSerializer(read_only=True)
 
     class Meta:
         model = Review
-        fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'reviewcountforagree', 'reviewcountfordisagree']
-
-
-# class VideoReviewCountSerializer(serializers.ModelSerializer):
-#
-#     class Meta:
-#         model = VideoReviewCount
-#         fields = '__all__'
+        fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'reviewcountforagree', 'reviewcountfordisagree', 'created_at']
 
 
 class VideoReviewCountForAgreeSerializer(serializers.ModelSerializer):
@@ -197,13 +192,12 @@ class VideoReviewCountForDisagreeSerializer(serializers.ModelSerializer):
 
 class VideoReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    # videoreviewcount = VideoReviewCountSerializer(read_only=True)
     videoreviewcountforagree = VideoReviewCountForAgreeSerializer(read_only=True)
     videoreviewcountfordisagree = VideoReviewCountForDisagreeSerializer(read_only=True)
 
     class Meta:
         model = VideoReview
-        fields = ['id', 'link', 'product', 'user', 'videoreviewcountforagree', 'videoreviewcountfordisagree']
+        fields = ['id', 'link', 'product', 'user', 'videoreviewcountforagree', 'videoreviewcountfordisagree', 'created_at']
 
 
 class ProductSerializer(serializers.ModelSerializer):
@@ -213,7 +207,7 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'slug', 'code', 'name', 'price', 'category', 'brand', 'details', 'video_details',
+        fields = ['id', 'slug', 'name', 'price', 'category', 'brand', 'video_details',
                   'trending_outfit', 'product_image', 'has_size', 'has_trial', 'review', 'video_review',
                   'product_detail', 'you_will_get', 'product_info', 'productavailable']
 # why don't I get review here
@@ -223,16 +217,6 @@ class ProductSerializer(serializers.ModelSerializer):
 
 class ReviewReadSerializer(ReviewSerializer):
     product = ProductSerializer(read_only=True)
-
-
-#
-# class RatingSerializer(serializers.ModelSerializer):
-#     # user = serializers.ReadOnlyField(source='user.userprofile.full_name')
-#
-#     class Meta:
-#         model = Rating
-#         fields = '__all__'
-#         read_only_fields = ['user']
 
 
 class VideoReviewReadSerializer(VideoReviewSerializer):
@@ -245,14 +229,6 @@ class CategorySerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ['id', 'slug', 'category_name', 'category_img', 'product']
-
-
-# class CategorySerializer(serializers.ModelSerializer):
-#     sub_category = SubCategorySerializer(many=True)
-#
-#     class Meta:
-#         model = Category
-#         fields = ['id', 'slug', 'category_name', 'sub_category']
 
 
 class BrandSerializer(serializers.ModelSerializer):

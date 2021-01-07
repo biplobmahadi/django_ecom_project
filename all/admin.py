@@ -1,8 +1,8 @@
 from django.contrib import admin
-from .models import (Contact, Product, Category, Brand, Review, Rating, VideoReview, ProductImage,
-                     BackgroudImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder, ReviewCount,
+from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage,
+                     BackgroudImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder,
                      ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo,
-                     VideoReviewCount, ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
+                     ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
 
 
 @admin.register(Contact)
@@ -38,7 +38,7 @@ class ProductInfoInline(admin.TabularInline):
 
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('code', 'name', 'slug', 'price', 'category', 'brand', 'created_at')
+    list_display = ('name', 'slug', 'price', 'category', 'brand', 'created_at')
 
     fieldsets = (
         ('Product Details', {
@@ -62,7 +62,7 @@ class MyOrderAdmin(admin.ModelAdmin):
                        'receiver_area', 'receiver_address')
         }),
         ('Product Details', {
-            'fields': ('my_bag', 'user', 'sub_total', 'total', 'payment', 'is_confirm', 'is_payment_confirm')
+            'fields': ('my_bag', 'user', 'total', 'total_payable', 'payment', 'is_confirm', 'is_payment_confirm')
         }),
         ('Conditions', {
             'fields': ('is_processing', 'is_placed', 'is_on_road', 'is_completed')
@@ -80,12 +80,10 @@ admin.site.register(Trending)
 admin.site.register(TrendingOutfit)
 admin.site.register(Brand)
 admin.site.register(Review)
-# admin.site.register(ReviewCount)
 admin.site.register(ReviewCountForAgree)
 admin.site.register(ReviewCountForDisagree)
 admin.site.register(ProductAvailable)
 admin.site.register(VideoReview)
-# admin.site.register(VideoReviewCount)
 admin.site.register(VideoReviewCountForAgree)
 admin.site.register(VideoReviewCountForDisagree)
 admin.site.register(BackgroudImage)

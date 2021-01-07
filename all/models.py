@@ -1,32 +1,45 @@
 from django.db import models
 from django.utils.text import slugify
 from phonenumber_field.modelfields import PhoneNumberField
-from django.core.validators import MaxValueValidator, MinValueValidator
 import uuid
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 
+# division, city, area select choice option set here
+# need to update city and area
 DIVISION_SELECT = (
-        ('Dhaka', 'Dhaka'),
-        ('Chottogram', 'Chottogram'),
-        ('Rajshahi', 'Rajshahi'),
-        ('Sylhet', 'Sylhet'),
-    )
+    ('Dhaka', 'Dhaka'),
+    ('Chittagong', 'Chittagong'),
+    ('Rajshahi', 'Rajshahi'),
+    ('Khulna', 'Khulna'),
+    ('Sylhet', 'Sylhet'),
+    ('Barisal', 'Barisal'),
+    ('Rangpur', 'Rangpur'),
+    ('Mymensingh', 'Mymensingh'),
+)
 CITY_SELECT = (
     ('Dhaka', 'Dhaka'),
-    ('Chottogram', 'Chottogram'),
+    ('Chittagong', 'Chittagong'),
     ('Rajshahi', 'Rajshahi'),
+    ('Khulna', 'Khulna'),
     ('Sylhet', 'Sylhet'),
+    ('Barisal', 'Barisal'),
+    ('Rangpur', 'Rangpur'),
+    ('Mymensingh', 'Mymensingh'),
 )
 AREA_SELECT = (
     ('Dhaka', 'Dhaka'),
-    ('Chottogram', 'Chottogram'),
+    ('Chittagong', 'Chittagong'),
     ('Rajshahi', 'Rajshahi'),
+    ('Khulna', 'Khulna'),
     ('Sylhet', 'Sylhet'),
-    ('mamaaaa', 'mamaaaa'),
+    ('Barisal', 'Barisal'),
+    ('Rangpur', 'Rangpur'),
+    ('Mymensingh', 'Mymensingh'),
 )
 
+# size set for select choice option
 SIZE_SELECT = (
     ('XS', 'XS'),
     ('S', 'S'),
@@ -37,11 +50,15 @@ SIZE_SELECT = (
     ('XXXL', 'XXXL'),
 )
 
+# payment set for select choice option
+PAYMENT_SELECT = (
+    ('Cash On Delivery', 'Cash On Delivery'),
+)
+
 
 class UserProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    # custom fields for user
-    # full_name = models.CharField(max_length=100, blank=True, null=True)
+    # custom fields for user where one user have only one profile
     phone = PhoneNumberField(blank=True, null=True)
     division = models.CharField(max_length=100, choices=DIVISION_SELECT, blank=True, null=True)
     city = models.CharField(max_length=100, choices=CITY_SELECT, blank=True, null=True)
@@ -52,6 +69,7 @@ class UserProfile(models.Model):
         return self.user.username
 
 
+# create the instance for user and userprofile
 @receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
@@ -64,7 +82,6 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Contact(models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
     name = models.CharField(max_length=30)
     email = models.EmailField()
     phone = PhoneNumberField()
@@ -76,23 +93,8 @@ class Contact(models.Model):
         return self.name
 
 
-# class Category(models.Model):
-#     slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
-#     category_name = models.CharField(max_length=50, unique=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#
-#     def save(self, *args, **kwargs):
-#         value = self.category_name
-#         self.slug = slugify(value, allow_unicode=True)
-#         super().save(*args, **kwargs)
-#
-#     def __str__(self):
-#         return f'{self.category_name}'
-
-
 class Category(models.Model):
-    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
-    # category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='sub_category')
+    slug = models.SlugField(max_length=50, unique=True, editable=False)
     category_name = models.CharField(max_length=50, unique=True, help_text="eg. (Men's Pant, Women's Shirt, IPhone, Football)")
     category_img = models.ImageField(upload_to='category_img')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -107,7 +109,7 @@ class Category(models.Model):
 
 
 class Brand(models.Model):
-    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
+    slug = models.SlugField(max_length=50, unique=True, editable=False)
     brand_name = models.CharField(max_length=50, unique=True)
     brand_img = models.ImageField(upload_to='brand_img')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -122,11 +124,9 @@ class Brand(models.Model):
 
 
 class Trending(models.Model):
-    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
-    trend_name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=50, unique=True, editable=False)
+    trend_name = models.CharField(max_length=50, unique=True)
     trend_img = models.ImageField(upload_to='trend_img')
-    # trend_outfit_name = models.CharField(max_length=50, unique=True)
-    # trend_outfit_img = models.ImageField(upload_to='trend_outfit_img')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -139,10 +139,8 @@ class Trending(models.Model):
 
 
 class TrendingOutfit(models.Model):
-    slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
-    # trend_name = models.CharField(max_length=50)
-    # trend_img = models.ImageField(upload_to='trend_img')
-    trending = models.ForeignKey(Trending, on_delete=models.SET_NULL, null=True, related_name='trending_outfit')
+    slug = models.SlugField(max_length=50, unique=True, editable=False)
+    trending = models.ForeignKey(Trending, on_delete=models.CASCADE, related_name='trending_outfit')
     trend_outfit_name = models.CharField(max_length=50, unique=True)
     trend_outfit_img = models.ImageField(upload_to='trend_outfit_img')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -157,25 +155,17 @@ class TrendingOutfit(models.Model):
 
 
 class Product(models.Model):
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False, unique=True)
-    slug = models.SlugField(max_length=150, help_text='set a slug for url', unique=True, editable=False)
-    # slug max_lenght more than name because of there price will include
-    code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    slug = models.SlugField(max_length=150, unique=True, editable=False)
+    # slug max_length more than name because of there price will include
     name = models.CharField(max_length=100, unique=True)
-    price = models.IntegerField(validators=[MinValueValidator(0)])
+    price = models.PositiveIntegerField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='product')
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, related_name='product')
     trending_outfit = models.ForeignKey(TrendingOutfit, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
 
     has_size = models.BooleanField(default=False)
     has_trial = models.BooleanField(default=False)
-    
-    details = models.TextField(max_length=500)
-    # details field will redesign after everything in product
-    # product_details_1_title = models.CharField(max_length=100)
-    # product_details_1_title = models.CharField(max_length=100)
-    # product_details_1_title = models.CharField(max_length=100)
-    # product_details_1_value = models.CharField(max_length=100)
+
     video_details = models.URLField(help_text='provide a youtube link')
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -191,14 +181,15 @@ class Product(models.Model):
 class ProductAvailable(models.Model):
     available_quantity = models.PositiveIntegerField(default=5)
     product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    # these relationship is perfect
+    # this relationship is perfect
+    # one product has only one ProductAvailable
 
     def __str__(self):
         return f'Available -> {self.available_quantity}'
 
 # here, relationship for product for multiple option is perfect
 # when we set available, one product has only one. then the rltn is onetoone
-# but we can set multiple gift, detail, image for one single product thats why they are foreignkey rltn
+# but we can set multiple gift, detail, image, info for one single product thats why they are foreignkey rltn
 
 
 class ProductDetail(models.Model):
@@ -237,38 +228,13 @@ class ProductInfo(models.Model):
 
 class Review(models.Model):
     review_detail = models.TextField()
-    rating_star = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    rating_star = models.PositiveIntegerField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'Review PK: -> {self.id}'
-
-
-class ReviewCount(models.Model):
-    pass
-#
-# class ReviewCount(models.Model):
-#     review = models.OneToOneField(Review, on_delete=models.CASCADE)
-#     agreed = models.PositiveIntegerField(default=0)
-#     disagreed = models.PositiveIntegerField(default=0)
-#     user = models.ManyToManyField(User, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#
-#     def __str__(self):
-#         return f'Review PK: -> {self.review.id}'
-#
-#
-# @receiver(post_save, sender=Review)
-# def create_review_count(sender, instance, created, **kwargs):
-#     if created:
-#         ReviewCount.objects.create(review=instance)
-#
-#
-# @receiver(post_save, sender=Review)
-# def save_review_count(sender, instance, **kwargs):
-#     instance.reviewcount.save()
 
 
 class ReviewCountForAgree(models.Model):
@@ -278,7 +244,7 @@ class ReviewCountForAgree(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Review PK: -> {self.review.id}'
+        return f'Review PK: {self.review.id} and agreed {self.agreed}'
 
 
 @receiver(post_save, sender=Review)
@@ -299,7 +265,7 @@ class ReviewCountForDisagree(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Review PK: -> {self.review.id}'
+        return f'Review PK: -> {self.review.id} and disagreed {self.disagreed}'
 
 
 @receiver(post_save, sender=Review)
@@ -313,13 +279,9 @@ def save_review_count_for_disagree(sender, instance, **kwargs):
     instance.reviewcountfordisagree.save()
 
 
-class Rating(models.Model):
-    pass
-
-
 class VideoReview(models.Model):
     link = models.URLField(help_text='provide a youtube link')
-    # rating_star = models.FloatField(validators=[MinValueValidator(0.0), MaxValueValidator(5.0)])
+    # this will no rating, only review
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='video_review')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -335,7 +297,7 @@ class VideoReviewCountForAgree(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Video Review PK: -> {self.video_review.id}'
+        return f'Video Review PK: -> {self.video_review.id} and agreed {self.agreed}'
 
 
 @receiver(post_save, sender=VideoReview)
@@ -356,7 +318,7 @@ class VideoReviewCountForDisagree(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Review PK: -> {self.video_review.id}'
+        return f'Review PK: -> {self.video_review.id} and disagreed {self.disagreed}'
 
 
 @receiver(post_save, sender=VideoReview)
@@ -370,38 +332,11 @@ def save_video_review_count_for_disagree(sender, instance, **kwargs):
     instance.videoreviewcountfordisagree.save()
 
 
-class VideoReviewCount(models.Model):
-    pass
-
-# class VideoReviewCount(models.Model):
-#     video_review = models.OneToOneField(VideoReview, on_delete=models.CASCADE)
-#     agreed = models.PositiveIntegerField(default=0)
-#     disagreed = models.PositiveIntegerField(default=0)
-#     user = models.ManyToManyField(User, blank=True)
-#     created_at = models.DateTimeField(auto_now_add=True)
-#
-#     def __str__(self):
-#         return f'Video Review PK: -> {self.video_review.id}'
-#
-# # have a problem here
-# # solved
-#
-# @receiver(post_save, sender=VideoReview)
-# def create_video_review_count(sender, instance, created, **kwargs):
-#     if created:
-#         VideoReviewCount.objects.create(video_review=instance)
-#
-#
-# @receiver(post_save, sender=VideoReview)
-# def save_video_review_count(sender, instance, **kwargs):
-#     instance.videoreviewcount.save()
-
-
 class ProductWithQuantity(models.Model):
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='product_with_quantity')
     quantity = models.PositiveIntegerField(default=1)
     size = models.CharField(max_length=10, choices=SIZE_SELECT, blank=True)
-    cost = models.PositiveIntegerField(blank=True)
+    cost = models.PositiveIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     add_as_trial = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -411,23 +346,22 @@ class ProductWithQuantity(models.Model):
 
 
 class MyBag(models.Model):
-    product = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)
-    sub_total = models.PositiveIntegerField(blank=True)
+    product_with_quantity = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)
+    sub_total = models.PositiveIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_send_to_my_order = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Total product in bag: {self.product.all().count()} -> User: {self.user.username}'
+        return f'Total product in bag: {self.product_with_quantity.all().count()} -> User: {self.user.username}'
 
 
 class MyOrder(models.Model):
-    # slug = models.SlugField(max_length=50, help_text='set a slug for url', unique=True, editable=False)
     order_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     my_bag = models.OneToOneField(MyBag, on_delete=models.DO_NOTHING, related_name='my_order')
-    sub_total = models.PositiveIntegerField(blank=True, null=True)
-    total = models.PositiveIntegerField(blank=True, null=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    total = models.PositiveIntegerField()
+    total_payable = models.PositiveIntegerField()
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     receiver_name = models.CharField(max_length=30, blank=True)
     receiver_phone = PhoneNumberField(blank=True)
@@ -436,9 +370,11 @@ class MyOrder(models.Model):
     receiver_city = models.CharField(max_length=100, choices=CITY_SELECT, blank=True)
     receiver_area = models.CharField(max_length=100, choices=AREA_SELECT, blank=True)
     receiver_address = models.TextField(max_length=200, blank=True)
+
     is_confirm = models.BooleanField(default=False)
     is_payment_confirm = models.BooleanField(default=False)
-    payment = models.CharField(blank=True, null=True, max_length=50)
+
+    payment = models.CharField(max_length=100, choices=PAYMENT_SELECT, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     is_processing = models.BooleanField(default=False)
     is_placed = models.BooleanField(default=False)
