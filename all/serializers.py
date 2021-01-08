@@ -282,7 +282,7 @@ class MyBagSerializer(serializers.ModelSerializer):
 
 
 class MyBagReadSerializer(MyBagSerializer):
-    product = ProductWithQuantityReadSerializer(read_only=True, many=True)
+    product_with_quantity = ProductWithQuantityReadSerializer(read_only=True, many=True)
 
 
 class MyOrderSerializer(serializers.ModelSerializer):
