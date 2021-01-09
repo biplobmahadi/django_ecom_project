@@ -231,7 +231,8 @@ class Review(models.Model):
     rating_star = models.PositiveIntegerField()
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now=True)
+    # here use auto_now=True, because when user update then this date will auto update
 
     def __str__(self):
         return f'Review PK: -> {self.id}'
@@ -284,7 +285,8 @@ class VideoReview(models.Model):
     # this will no rating, only review
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='video_review')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now=True) 
+    # here use auto_now=True, because when user update then this date will auto update
 
     def __str__(self):
         return f'Video Review PK: -> {self.id}'
