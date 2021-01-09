@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 from phonenumber_field.modelfields import PhoneNumberField
+from django.core.validators import MaxValueValidator
 import uuid
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
@@ -228,7 +229,7 @@ class ProductInfo(models.Model):
 
 class Review(models.Model):
     review_detail = models.TextField()
-    rating_star = models.PositiveIntegerField()
+    rating_star = models.PositiveIntegerField(validators=[MaxValueValidator(5)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
