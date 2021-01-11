@@ -42,7 +42,7 @@ urlpatterns = [
     path('my-bag/', views.MyBagListCreate.as_view()),
     path('my-bag/<int:pk>/', views.MyBagRetrieveUpdate.as_view()),
     path('my-order/', views.MyOrderListCreate.as_view()),
-    path('my-order/<int:pk>/', views.MyOrderRetrieveUpdate.as_view()),
+    path('my-order/<slug:order_code>/', views.MyOrderRetrieveUpdate.as_view()),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     path('rest-auth/', include('rest_auth.urls')),
