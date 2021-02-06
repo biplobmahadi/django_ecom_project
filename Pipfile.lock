@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "2737bf09d665ca5c9778a204f931d94f8905bb91307c62efff5534b6cef54048"
+            "sha256": "cddaf6458d4d589a64d733c82b8d3d752febb46ca3aa5cd458f8b53e3aec0d1c"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -48,13 +48,20 @@
             "index": "pypi",
             "version": "==0.6.0"
         },
-        "django": {
+        "dj-rest-auth": {
             "hashes": [
-                "sha256:a2127ad0150ec6966655bedf15dbbff9697cc86d61653db2da1afa506c0b04cc",
-                "sha256:c93c28ccf1d094cbd00d860e83128a39e45d2c571d3b54361713aaaf9a94cac4"
+                "sha256:a5ae4e1180e29539839677b51fd6faf84ea410270c082d2479abf5490422ca21"
             ],
             "index": "pypi",
-            "version": "==3.1.2"
+            "version": "==2.1.3"
+        },
+        "django": {
+            "hashes": [
+                "sha256:2d78425ba74c7a1a74b196058b261b9733a8570782f4e2828974777ccca7edf7",
+                "sha256:efa2ab96b33b20c2182db93147a0c3cd7769d418926f9e9f140a60dca7c64ca9"
+            ],
+            "index": "pypi",
+            "version": "==3.1.5"
         },
         "django-allauth": {
             "hashes": [
@@ -72,7 +79,6 @@
             "version": "==3.5.0"
         },
         "django-phonenumber-field": {
-            "extras": [],
             "hashes": [
                 "sha256:1eb7af3a108744665f7c3939d38aa15b3728c57d13d45d656b0a2aa11e8cdc3c",
                 "sha256:adb46905cc4ecb19d8494424e1c4352f24946bb472340a2a17257d44bf8228e6"
@@ -81,7 +87,6 @@
             "version": "==5.0.0"
         },
         "django-rest-auth": {
-            "extras": [],
             "hashes": [
                 "sha256:f11e12175dafeed772f50d740d22caeab27e99a3caca24ec65e66a8d6de16571"
             ],
@@ -90,11 +95,11 @@
         },
         "djangorestframework": {
             "hashes": [
-                "sha256:5c5071fcbad6dce16f566d492015c829ddb0df42965d488b878594aabc3aed21",
-                "sha256:d54452aedebb4b650254ca092f9f4f5df947cb1de6ab245d817b08b4f4156249"
+                "sha256:0209bafcb7b5010fdfec784034f059d512256424de2a0f084cb82b096d6dd6a7",
+                "sha256:0898182b4737a7b584a2c73735d89816343369f259fea932d90dc78e35d8ac33"
             ],
             "index": "pypi",
-            "version": "==3.12.1"
+            "version": "==3.12.2"
         },
         "idna": {
             "hashes": [

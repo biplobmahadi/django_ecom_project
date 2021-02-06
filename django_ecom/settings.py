@@ -158,7 +158,13 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 # when password change then need old password
 OLD_PASSWORD_FIELD_ENABLED = True
 
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_HOST = 'smtp.mailgun.org'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'postmaster@sandbox54cf482a4c844380821375d449def68d.mailgun.org'
+EMAIL_HOST_PASSWORD = '74c2a1545fd6b27ea4eba3eaffb4a963-07bc7b05-68cce00d'
+EMAIL_USE_TLS = True
+
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'all.serializers.UserSerializer',
@@ -174,4 +180,7 @@ ACCOUNT_ADAPTER = 'all.adapter.DefaultAccountAdapterCustom'
 URL_FRONT = 'http://localhost:3000/'
 
 # sendgrid email will never the same of superuser email
+# email account you use for SendGrid is not the same email account you have for your superuser
+
+
 
