@@ -7,10 +7,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/3.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'r)118t_bu&3epv=-!c^65h40(^3018&^k2^+g6y^ln#uv4-@sv'
+SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = ['*']
 
@@ -23,6 +23,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'drf_yasg',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -159,11 +160,12 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 OLD_PASSWORD_FIELD_ENABLED = True
 
 # EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
-EMAIL_HOST = 'smtp.mailgun.org'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = 'postmaster@sandbox54cf482a4c844380821375d449def68d.mailgun.org'
-EMAIL_HOST_PASSWORD = '74c2a1545fd6b27ea4eba3eaffb4a963-07bc7b05-68cce00d'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'jhonarab5@gmail.com'
+EMAIL_HOST_PASSWORD = 'mhbiplob'
 
 
 REST_AUTH_SERIALIZERS = {
@@ -181,6 +183,4 @@ URL_FRONT = 'http://localhost:3000/'
 
 # sendgrid email will never the same of superuser email
 # email account you use for SendGrid is not the same email account you have for your superuser
-
-
 

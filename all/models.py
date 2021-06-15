@@ -6,6 +6,9 @@ import uuid
 from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
+# for sending mail
+from django.conf import settings
+from django.core.mail import send_mail
 
 # division, city, area select choice option set here
 # need to update city and area
@@ -51,6 +54,13 @@ SIZE_SELECT = (
     ('XXXL', 'XXXL'),
 )
 
+# color set for select choice option
+COLOR_SELECT = (
+    ('Black', 'Black'),
+    ('Green', 'Green'),
+    ('Red', 'Red'),
+)
+
 # payment set for select choice option
 PAYMENT_SELECT = (
     ('Cash On Delivery', 'Cash On Delivery'),
@@ -92,6 +102,22 @@ class Contact(models.Model):
 
     def __str__(self):
         return self.name
+
+################ sending mail system using signals when user create a contact then it will auto send an email
+######### from me to user.
+# @receiver(post_save, sender=Contact)
+# def send_mail_on_create(sender, instance, created, **kwargs):
+#     if created:
+#         name = instance.name
+#         email = instance.email
+#         message = instance.message
+#         phone = instance.phone
+#         subject = 'welcome to ecom world'
+#         message = f'''Hi {name}, {message}.
+# Your number is: {phone}'''
+#         email_from = settings.EMAIL_HOST_USER
+#         recipient_list = [email]
+#         send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 
 
 class Category(models.Model):
@@ -164,8 +190,8 @@ class Product(models.Model):
     brand = models.ForeignKey(Brand, on_delete=models.SET_NULL, null=True, related_name='product')
     trending_outfit = models.ForeignKey(TrendingOutfit, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
 
-    has_size = models.BooleanField(default=False)
     has_trial = models.BooleanField(default=False)
+    is_available = models.BooleanField(default=False) # available number will not be added
 
     video_details = models.URLField(help_text='provide a youtube link')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -179,18 +205,35 @@ class Product(models.Model):
         return f'Name: {self.name} -> Price: {self.price}'
 
 
-class ProductAvailable(models.Model):
-    available_quantity = models.PositiveIntegerField(default=5)
-    product = models.OneToOneField(Product, on_delete=models.CASCADE)
-    # this relationship is perfect
-    # one product has only one ProductAvailable
+# # not perfect, because multiple user can't post request in one row
+# class ProductAvailable(models.Model):
+#     available_quantity = models.PositiveIntegerField(default=5)
+#     product = models.OneToOneField(Product, on_delete=models.CASCADE)
+#     # this relationship is perfect
+#     # one product has only one ProductAvailable
+#
+#     def __str__(self):
+#         return f'Available -> {self.available_quantity}'
+#
+# # here, relationship for product for multiple option is perfect
+# # when we set available, one product has only one. then the rltn is onetoone
+# # but we can set multiple gift, detail, image, info for one single product thats why they are foreignkey rltn
+
+
+class ProductSize(models.Model):
+    size = models.CharField(max_length=10, choices=SIZE_SELECT)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_size')
 
     def __str__(self):
-        return f'Available -> {self.available_quantity}'
+        return f'Size -> {self.size}'
 
-# here, relationship for product for multiple option is perfect
-# when we set available, one product has only one. then the rltn is onetoone
-# but we can set multiple gift, detail, image, info for one single product thats why they are foreignkey rltn
+
+class ProductColor(models.Model):
+    color = models.CharField(max_length=20, choices=COLOR_SELECT)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_color')
+
+    def __str__(self):
+        return f'Color -> {self.color}'
 
 
 class ProductDetail(models.Model):
@@ -239,46 +282,50 @@ class Review(models.Model):
         return f'Review PK: -> {self.id}'
 
 
-class ReviewCountForAgree(models.Model):
-    review = models.OneToOneField(Review, on_delete=models.CASCADE)
-    agreed = models.PositiveIntegerField(default=0)
-    user = models.ManyToManyField(User, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+class ReviewCount(models.Model):
+    review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_count')
+    agreed = models.BooleanField(default=False)
+    disagreed = models.BooleanField(default=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE) # one user can do only one agreed or disagreed
+    created_at = models.DateTimeField(auto_now=True)
+    # here use auto_now=True, because when user update then this date will auto update
 
     def __str__(self):
         return f'Review PK: {self.review.id} and agreed {self.agreed}'
 
 
-@receiver(post_save, sender=Review)
-def create_review_count_for_agree(sender, instance, created, **kwargs):
-    if created:
-        ReviewCountForAgree.objects.create(review=instance)
+# @receiver(post_save, sender=Review)
+# def create_review_count_for_agree(sender, instance, created, **kwargs):
+#     if created:
+#         ReviewCountForAgree.objects.create(review=instance)
+#
+#
+# @receiver(post_save, sender=Review)
+# def save_review_count_for_agree(sender, instance, **kwargs):
+#     instance.reviewcountforagree.save()
 
 
-@receiver(post_save, sender=Review)
-def save_review_count_for_agree(sender, instance, **kwargs):
-    instance.reviewcountforagree.save()
+# class ReviewCountForDisagree(models.Model):
+#     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_count_for_disagree')
+#     agreed = models.BooleanField(default=False)
+#     disagreed = models.BooleanField(default=False)
+#     user = models.OneToOneField(User, on_delete=models.CASCADE) # one user can do only one agreed or disagreed
+#     created_at = models.DateTimeField(auto_now=True)
+#     # here use auto_now=True, because when user update then this date will auto update
+#
+#     def __str__(self):
+#         return f'Review PK: -> {self.review.id} and disagreed {self.disagreed}'
 
 
-class ReviewCountForDisagree(models.Model):
-    review = models.OneToOneField(Review, on_delete=models.CASCADE)
-    disagreed = models.PositiveIntegerField(default=0)
-    user = models.ManyToManyField(User, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'Review PK: -> {self.review.id} and disagreed {self.disagreed}'
-
-
-@receiver(post_save, sender=Review)
-def create_review_count_for_disagree(sender, instance, created, **kwargs):
-    if created:
-        ReviewCountForDisagree.objects.create(review=instance)
-
-
-@receiver(post_save, sender=Review)
-def save_review_count_for_disagree(sender, instance, **kwargs):
-    instance.reviewcountfordisagree.save()
+# @receiver(post_save, sender=Review)
+# def create_review_count_for_disagree(sender, instance, created, **kwargs):
+#     if created:
+#         ReviewCountForDisagree.objects.create(review=instance)
+#
+#
+# @receiver(post_save, sender=Review)
+# def save_review_count_for_disagree(sender, instance, **kwargs):
+#     instance.reviewcountfordisagree.save()
 
 
 class VideoReview(models.Model):
@@ -293,52 +340,55 @@ class VideoReview(models.Model):
         return f'Video Review PK: -> {self.id}'
 
 
-class VideoReviewCountForAgree(models.Model):
-    video_review = models.OneToOneField(VideoReview, on_delete=models.CASCADE)
-    agreed = models.PositiveIntegerField(default=0)
-    user = models.ManyToManyField(User, blank=True)
+class VideoReviewCount(models.Model):
+    video_review = models.ForeignKey(VideoReview, on_delete=models.CASCADE, related_name='video_review_count')
+    agreed = models.BooleanField(default=False)
+    disagreed = models.BooleanField(default=False)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # one user can do only one agreed or disagreed
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
         return f'Video Review PK: -> {self.video_review.id} and agreed {self.agreed}'
 
 
-@receiver(post_save, sender=VideoReview)
-def create_video_review_count_for_agree(sender, instance, created, **kwargs):
-    if created:
-        VideoReviewCountForAgree.objects.create(video_review=instance)
+# @receiver(post_save, sender=VideoReview)
+# def create_video_review_count_for_agree(sender, instance, created, **kwargs):
+#     if created:
+#         VideoReviewCountForAgree.objects.create(video_review=instance)
+#
+#
+# @receiver(post_save, sender=VideoReview)
+# def save_video_review_count_for_agree(sender, instance, **kwargs):
+#     instance.videoreviewcountforagree.save()
 
 
-@receiver(post_save, sender=VideoReview)
-def save_video_review_count_for_agree(sender, instance, **kwargs):
-    instance.videoreviewcountforagree.save()
+# class VideoReviewCountForDisagree(models.Model):
+#     video_review = models.ForeignKey(VideoReview, on_delete=models.CASCADE, related_name='video_review_count_for_disagree')
+#     agreed = models.BooleanField(default=False)
+#     disagreed = models.BooleanField(default=False)
+#     user = models.OneToOneField(User, on_delete=models.CASCADE)  # one user can do only one agreed or disagreed
+#     created_at = models.DateTimeField(auto_now_add=True)
+#
+#     def __str__(self):
+#         return f'Review PK: -> {self.video_review.id} and disagreed {self.disagreed}'
 
 
-class VideoReviewCountForDisagree(models.Model):
-    video_review = models.OneToOneField(VideoReview, on_delete=models.CASCADE)
-    disagreed = models.PositiveIntegerField(default=0)
-    user = models.ManyToManyField(User, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
-
-    def __str__(self):
-        return f'Review PK: -> {self.video_review.id} and disagreed {self.disagreed}'
-
-
-@receiver(post_save, sender=VideoReview)
-def create_video_review_count_for_disagree(sender, instance, created, **kwargs):
-    if created:
-        VideoReviewCountForDisagree.objects.create(video_review=instance)
-
-
-@receiver(post_save, sender=VideoReview)
-def save_video_review_count_for_disagree(sender, instance, **kwargs):
-    instance.videoreviewcountfordisagree.save()
+# @receiver(post_save, sender=VideoReview)
+# def create_video_review_count_for_disagree(sender, instance, created, **kwargs):
+#     if created:
+#         VideoReviewCountForDisagree.objects.create(video_review=instance)
+#
+#
+# @receiver(post_save, sender=VideoReview)
+# def save_video_review_count_for_disagree(sender, instance, **kwargs):
+#     instance.videoreviewcountfordisagree.save()
 
 
 class ProductWithQuantity(models.Model):
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='product_with_quantity')
     quantity = models.PositiveIntegerField(default=1)
     size = models.CharField(max_length=10, choices=SIZE_SELECT, blank=True)
+    color = models.CharField(max_length=20, choices=COLOR_SELECT, blank=True)
     cost = models.PositiveIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     add_as_trial = models.BooleanField(default=False)
@@ -388,7 +438,8 @@ class MyOrder(models.Model):
         return f'Code: {self.order_code} -> User: {self.user.username}'
 
 
-class BackgroudImage(models.Model):
+# this is for carousel
+class CarouselImage(models.Model):
     image = models.ImageField(upload_to='background_image')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

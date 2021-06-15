@@ -1,8 +1,8 @@
 from rest_framework import serializers
-from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage, BackgroudImage,
+from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage, CarouselImage,
                      Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder,
-                     ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo, 
-                     ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
+                     ReviewCount, ProductDetail, YouWillGet, ProductInfo,
+                     ProductSize, ProductColor, VideoReviewCount)
 from phonenumber_field.serializerfields import PhoneNumberField
 from django.contrib.auth.models import User
 from rest_auth.serializers import UserDetailsSerializer
@@ -10,7 +10,8 @@ from django.contrib.auth.forms import PasswordResetForm
 from django.conf import settings
 from django.utils.translation import gettext as _
 from rest_auth.registration.serializers import RegisterSerializer
-
+# for sending mail
+from django.core.mail import send_mail
 
 # division, city, area select choice option set here
 # need to update city and area
@@ -54,6 +55,15 @@ class MyRegisterSerializer(RegisterSerializer):
         user.first_name = self.validated_data.get('first_name', '')
         user.last_name = self.validated_data.get('last_name', '')
         user.save(update_fields=['first_name', 'last_name'])
+########################## custom mail sending for confirm registration, but smtp already send varification like mailgun
+#         name = user.first_name
+#         email = user.email
+#         subject = 'Confirm your account'
+#         message = f'''Hi {name},
+# Your email is: {email}'''
+#         email_from = settings.EMAIL_HOST_USER
+#         recipient_list = [email]
+#         send_mail(subject, message, email_from, recipient_list, fail_silently=False)
 
 
 class PasswordResetSerializer(serializers.Serializer):
@@ -120,13 +130,6 @@ class ContactSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'email', 'phone', 'message']
 
 
-class ProductAvailableSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProductAvailable
-        fields = '__all__'
-        read_only_fields = ['product']
-        
-
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProductImage
@@ -151,68 +154,60 @@ class ProductInfoSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class ReviewCountForAgreeSerializer(serializers.ModelSerializer):
-
+class ProductSizeSerializer(serializers.ModelSerializer):
     class Meta:
-        model = ReviewCountForAgree
+        model = ProductSize
         fields = '__all__'
 
 
-class ReviewCountForDisagreeSerializer(serializers.ModelSerializer):
+class ProductColorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ProductColor
+        fields = '__all__'
+
+
+class ReviewCountSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = ReviewCountForDisagree
+        model = ReviewCount
         fields = '__all__'
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    # this is for instance
-    reviewcountforagree = ReviewCountForAgreeSerializer(read_only=True)
-    reviewcountfordisagree = ReviewCountForDisagreeSerializer(read_only=True)
+    review_count = ReviewCountSerializer(read_only=True, many=True)
 
     class Meta:
         model = Review
-        fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'reviewcountforagree', 'reviewcountfordisagree', 'created_at']
+        fields = ['id', 'review_detail', 'rating_star', 'product', 'user', 'review_count', 'created_at']
 
 
-class VideoReviewCountForAgreeSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = VideoReviewCountForAgree
-        fields = '__all__'
-
-
-class VideoReviewCountForDisagreeSerializer(serializers.ModelSerializer):
+class VideoReviewCountSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = VideoReviewCountForDisagree
+        model = VideoReviewCount
         fields = '__all__'
 
 
 class VideoReviewSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
-    videoreviewcountforagree = VideoReviewCountForAgreeSerializer(read_only=True)
-    videoreviewcountfordisagree = VideoReviewCountForDisagreeSerializer(read_only=True)
+    video_review_count = VideoReviewCountSerializer(read_only=True, many=True)
 
     class Meta:
         model = VideoReview
-        fields = ['id', 'link', 'product', 'user', 'videoreviewcountforagree', 'videoreviewcountfordisagree', 'created_at']
+        fields = ['id', 'link', 'product', 'user', 'video_review_count', 'created_at']
 
 
 class ProductSerializer(serializers.ModelSerializer):
     review = ReviewSerializer(many=True)
     video_review = VideoReviewSerializer(many=True)
-    productavailable = ProductAvailableSerializer(read_only=True)
 
     class Meta:
         model = Product
-        fields = ['id', 'slug', 'name', 'price', 'category', 'brand', 'video_details',
-                  'trending_outfit', 'product_image', 'has_size', 'has_trial', 'review', 'video_review',
-                  'product_detail', 'you_will_get', 'product_info', 'productavailable']
-# why don't I get review here
-        depth = 2
-# I change this position in 16 nov
+        fields = ['id', 'slug', 'name', 'price', 'brand', 'video_details',
+                  'product_image', 'is_available', 'has_trial', 'review', 'video_review',
+                  'product_detail', 'you_will_get', 'product_info', 'product_color', 'product_size']
+        depth = 1
 
 
 class ReviewReadSerializer(ReviewSerializer):
@@ -239,9 +234,9 @@ class BrandSerializer(serializers.ModelSerializer):
         fields = ['id', 'slug', 'brand_name', 'brand_img', 'product']
 
 
-class BackgroudImageSerializer(serializers.ModelSerializer):
+class CarouselImageSerializer(serializers.ModelSerializer):
     class Meta:
-        model = BackgroudImage
+        model = CarouselImage
         fields = ['id', 'image', 'is_active']
 
 

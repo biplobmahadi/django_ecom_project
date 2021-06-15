@@ -1,19 +1,16 @@
-from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage, BackgroudImage,
+from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage, CarouselImage,
                      Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder,
-                     ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo,
-                     ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
-
-from rest_framework import generics, filters
+                     ReviewCount, ProductDetail, YouWillGet, ProductInfo, VideoReviewCount)
+from rest_framework.generics import (ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView,
+                                     ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView)
 # filters will use when implement search engine
 from .serializers import (ContactSerializer, ProductSerializer, CategorySerializer, BrandSerializer, ReviewSerializer,
-                          VideoReviewSerializer, ProductImageSerializer, BackgroudImageSerializer,
+                          VideoReviewSerializer, ProductImageSerializer, CarouselImageSerializer,
                           TrendingSerializer, TrendingOutfitSerializer, ProductWithQuantitySerializer, MyBagSerializer,
                           MyOrderSerializer, ProductWithQuantityReadSerializer, MyBagReadSerializer,
-                          MyOrderReadSerializer,
-                          ReviewReadSerializer, VideoReviewReadSerializer, ReviewCountForAgreeSerializer,
-                          ReviewCountForDisagreeSerializer, ProductDetailSerializer, YouWillGetSerializer,
-                          ProductInfoSerializer, ProductAvailableSerializer, VideoReviewCountForAgreeSerializer,
-                          VideoReviewCountForDisagreeSerializer)
+                          MyOrderReadSerializer, ReviewReadSerializer, VideoReviewReadSerializer, ReviewCountSerializer,
+                          ProductDetailSerializer, YouWillGetSerializer, ProductInfoSerializer,
+                          VideoReviewCountSerializer)
 
 from rest_framework.permissions import IsAuthenticated
 
@@ -32,50 +29,24 @@ class FacebookLogin(SocialLoginView):
     adapter_class = FacebookOAuth2Adapter
 
 
-class ContactCreate(generics.CreateAPIView):
+class ContactCreate(CreateAPIView):
     queryset = Contact.objects.all()
     serializer_class = ContactSerializer
 
 
-class ProductAvailableRetrieveUpdate(generics.RetrieveUpdateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = ProductAvailable.objects.all()
-    serializer_class = ProductAvailableSerializer
-
-
-class ProductImageList(generics.ListAPIView):
-    queryset = ProductImage.objects.all()
-    serializer_class = ProductImageSerializer
-
-
-class ProductDetailList(generics.ListAPIView):
-    queryset = ProductDetail.objects.all()
-    serializer_class = ProductDetailSerializer
-
-
-class YouWillGetList(generics.ListAPIView):
-    queryset = YouWillGet.objects.all()
-    serializer_class = YouWillGetSerializer
-
-
-class ProductInfoList(generics.ListAPIView):
-    queryset = ProductInfo.objects.all()
-    serializer_class = ProductInfoSerializer
-
-
-class ProductRetrieve(generics.RetrieveAPIView):
+class ProductRetrieve(RetrieveAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     lookup_field = 'slug'
 
 
-class CategoryRetrieve(generics.RetrieveAPIView):
+class CategoryRetrieve(RetrieveAPIView):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     lookup_field = 'slug'
 
 
-class BrandList(generics.ListAPIView):
+class BrandList(ListAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     # filter_backends = [filters.SearchFilter]
@@ -83,25 +54,19 @@ class BrandList(generics.ListAPIView):
     # if i implement search then it will use
 
 
-class BrandRetrieve(generics.RetrieveAPIView):
+class BrandRetrieve(RetrieveAPIView):
     queryset = Brand.objects.all()
     serializer_class = BrandSerializer
     lookup_field = 'slug'
 
 
-class ReviewCountForAgreeUpdate(generics.UpdateAPIView):
+class ReviewCountUpdate(UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = ReviewCountForAgree.objects.all()
-    serializer_class = ReviewCountForAgreeSerializer
+    queryset = ReviewCount.objects.all()
+    serializer_class = ReviewCountSerializer
 
 
-class ReviewCountForDisagreeUpdate(generics.UpdateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = ReviewCountForDisagree.objects.all()
-    serializer_class = ReviewCountForDisagreeSerializer
-
-
-class ReviewRead(generics.ListAPIView):
+class ReviewRead(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReviewReadSerializer
 
@@ -110,7 +75,7 @@ class ReviewRead(generics.ListAPIView):
         return Review.objects.filter(user=user)
 
 
-class ReviewCreate(generics.CreateAPIView):
+class ReviewCreate(CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = Review.objects.all()
     serializer_class = ReviewSerializer
@@ -119,7 +84,7 @@ class ReviewCreate(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class ReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+class ReviewRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReviewSerializer
 
@@ -128,19 +93,13 @@ class ReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
         return Review.objects.filter(user=user)
 
 
-class VideoReviewCountForAgreeUpdate(generics.UpdateAPIView):
+class VideoReviewCountUpdate(UpdateAPIView):
     permission_classes = [IsAuthenticated]
-    queryset = VideoReviewCountForAgree.objects.all()
-    serializer_class = VideoReviewCountForAgreeSerializer
+    queryset = VideoReviewCount.objects.all()
+    serializer_class = VideoReviewCountSerializer
 
 
-class VideoReviewCountForDisagreeUpdate(generics.UpdateAPIView):
-    permission_classes = [IsAuthenticated]
-    queryset = VideoReviewCountForDisagree.objects.all()
-    serializer_class = VideoReviewCountForDisagreeSerializer
-
-
-class VideoReviewRead(generics.ListAPIView):
+class VideoReviewRead(ListAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = VideoReviewReadSerializer
 
@@ -149,7 +108,7 @@ class VideoReviewRead(generics.ListAPIView):
         return VideoReview.objects.filter(user=user)
 
 
-class VideoReviewCreate(generics.CreateAPIView):
+class VideoReviewCreate(CreateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = VideoReview.objects.all()
     serializer_class = VideoReviewSerializer
@@ -158,7 +117,7 @@ class VideoReviewCreate(generics.CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class VideoReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+class VideoReviewRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = VideoReviewSerializer
 
@@ -167,45 +126,35 @@ class VideoReviewRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
         return VideoReview.objects.filter(user=user)
 
 
-class BackgroudImageList(generics.ListAPIView):
-    queryset = BackgroudImage.objects.all()
-    serializer_class = BackgroudImageSerializer
+class CarouselImageList(ListAPIView):
+    queryset = CarouselImage.objects.all()
+    serializer_class = CarouselImageSerializer
 
 
-class TrendingRetrieve(generics.RetrieveAPIView):
+class TrendingRetrieve(RetrieveAPIView):
     queryset = Trending.objects.all()
     serializer_class = TrendingSerializer
     lookup_field = 'slug'
 
 
-class TrendingOutfitRetrieve(generics.RetrieveAPIView):
+class TrendingOutfitRetrieve(RetrieveAPIView):
     queryset = TrendingOutfit.objects.all()
     serializer_class = TrendingOutfitSerializer
     lookup_field = 'slug'
 
 
-class ProductWithQuantityListCreate(generics.ListCreateAPIView):
+class ProductWithQuantityCreate(CreateAPIView):
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return ProductWithQuantity.objects.filter(user=user)
-
-    def get_serializer_class(self):
-        if self.request.method in ['GET']:
-            return ProductWithQuantityReadSerializer
-        return ProductWithQuantitySerializer
+    queryset = ProductWithQuantity.objects.all()
+    serializer_class = ProductWithQuantitySerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
 
 
-class ProductWithQuantityRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPIView):
+class ProductWithQuantityRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return ProductWithQuantity.objects.filter(user=user)
+    queryset = ProductWithQuantity.objects.all()
 
     def get_serializer_class(self):
         if self.request.method in ['GET']:
@@ -213,12 +162,12 @@ class ProductWithQuantityRetrieveUpdateDestroy(generics.RetrieveUpdateDestroyAPI
         return ProductWithQuantitySerializer
 
 
-class MyBagListCreate(generics.ListCreateAPIView):
+class MyBagListCreate(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
         user = self.request.user
-        return MyBag.objects.filter(user=user)
+        return MyBag.objects.filter(user=user, is_send_to_my_order=False)
 
     def get_serializer_class(self):
         if self.request.method in ['GET']:
@@ -229,12 +178,9 @@ class MyBagListCreate(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class MyBagRetrieveUpdate(generics.RetrieveUpdateAPIView):
+class MyBagUpdate(UpdateAPIView):
     permission_classes = [IsAuthenticated]
-
-    def get_queryset(self):
-        user = self.request.user
-        return MyBag.objects.filter(user=user)
+    queryset = MyBag.objects.all()
 
     def get_serializer_class(self):
         if self.request.method in ['GET']:
@@ -242,7 +188,7 @@ class MyBagRetrieveUpdate(generics.RetrieveUpdateAPIView):
         return MyBagSerializer
 
 
-class MyOrderListCreate(generics.ListCreateAPIView):
+class MyOrderListCreate(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
 
     def get_queryset(self):
@@ -258,13 +204,10 @@ class MyOrderListCreate(generics.ListCreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class MyOrderRetrieveUpdate(generics.RetrieveUpdateAPIView):
+class MyOrderRetrieveUpdate(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
+    queryset = MyOrder.objects.all()
     lookup_field = 'order_code'
-
-    def get_queryset(self):
-        user = self.request.user
-        return MyOrder.objects.filter(user=user)
 
     def get_serializer_class(self):
         if self.request.method in ['GET']:

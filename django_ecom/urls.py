@@ -5,6 +5,24 @@ from all import views
 from django.conf import settings
 from django.conf.urls.static import static
 
+# docs generation
+from rest_framework import permissions
+from drf_yasg.views import get_schema_view
+from drf_yasg import openapi
+
+schema_view = get_schema_view(
+   openapi.Info(
+      title="Snippets API",
+      default_version='v1',
+      description="Test description",
+      terms_of_service="https://www.google.com/policies/terms/",
+      contact=openapi.Contact(email="contact@snippets.local"),
+      license=openapi.License(name="BSD License"),
+   ),
+   public=True,
+   permission_classes=[permissions.AllowAny],
+)
+
 
 urlpatterns = [
     # only registered user email can get the email, others can't get the email... it's awesome!!!
@@ -13,11 +31,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('contacts/', views.ContactCreate.as_view()),
-    path('product-update-only-quantity/<int:pk>/', views.ProductAvailableRetrieveUpdate.as_view()),
-    path('product-images/', views.ProductImageList.as_view()),
-    path('product-details/', views.ProductDetailList.as_view()),
-    path('you-will-get/', views.YouWillGetList.as_view()),
-    path('product-info/', views.ProductInfoList.as_view()),
     path('products/<slug:slug>/', views.ProductRetrieve.as_view()),
     path('category/<slug:slug>/', views.CategoryRetrieve.as_view()),
     path('brands/', views.BrandList.as_view()),
@@ -26,21 +39,19 @@ urlpatterns = [
     path('reviews-read/', views.ReviewRead.as_view()),
     path('reviews-create/', views.ReviewCreate.as_view()),
     path('reviews/<int:pk>/', views.ReviewRetrieveUpdateDestroy.as_view()),
-    path('reviews-count-for-agree-update/<int:pk>/', views.ReviewCountForAgreeUpdate.as_view()),
-    path('reviews-count-for-disagree-update/<int:pk>/', views.ReviewCountForDisagreeUpdate.as_view()),
+    path('reviews-count-update/<int:pk>/', views.ReviewCountUpdate.as_view()),
     # this is for to access reviewed product from user pages
     path('video-reviews-read/', views.VideoReviewRead.as_view()),
     path('video-reviews-create/', views.VideoReviewCreate.as_view()),
     path('video-reviews/<int:pk>/', views.VideoReviewRetrieveUpdateDestroy.as_view()),
-    path('video-reviews-count-for-agree-update/<int:pk>/', views.VideoReviewCountForAgreeUpdate.as_view()),
-    path('video-reviews-count-for-disagree-update/<int:pk>/', views.VideoReviewCountForDisagreeUpdate.as_view()),
-    path('background-images/', views.BackgroudImageList.as_view()),
+    path('video-reviews-count-update/<int:pk>/', views.VideoReviewCountUpdate.as_view()),
+    path('carousel-images/', views.CarouselImageList.as_view()),
     path('trending/<slug:slug>/', views.TrendingRetrieve.as_view()),
     path('trending-outfit/<slug:slug>/', views.TrendingOutfitRetrieve.as_view()),
-    path('product-with-quantity/', views.ProductWithQuantityListCreate.as_view()),
+    path('product-with-quantity/', views.ProductWithQuantityCreate.as_view()),
     path('product-with-quantity/<int:pk>/', views.ProductWithQuantityRetrieveUpdateDestroy.as_view()),
     path('my-bag/', views.MyBagListCreate.as_view()),
-    path('my-bag/<int:pk>/', views.MyBagRetrieveUpdate.as_view()),
+    path('my-bag/<int:pk>/', views.MyBagUpdate.as_view()),
     path('my-order/', views.MyOrderListCreate.as_view()),
     path('my-order/<slug:order_code>/', views.MyOrderRetrieveUpdate.as_view()),
 
@@ -52,6 +63,11 @@ urlpatterns = [
     path('rest-auth/google/', views.GoogleLogin.as_view(), name='google_login'),
     path('rest-auth/social-signup/', TemplateView.as_view(), name='socialaccount_signup'),
     path('rest-auth/varification-email-sent/', TemplateView.as_view(), name='account_email_verification_sent'),
+
+    # doc path
+    # path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
+    path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
+    path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,8 +1,8 @@
 from django.contrib import admin
 from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage,
-                     BackgroudImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder,
-                     ReviewCountForAgree, ReviewCountForDisagree, ProductDetail, YouWillGet, ProductInfo,
-                     ProductAvailable, VideoReviewCountForAgree, VideoReviewCountForDisagree)
+                     CarouselImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder,
+                     ReviewCount, ProductDetail, YouWillGet, ProductInfo,
+                    ProductSize, ProductColor, VideoReviewCount)
 
 
 @admin.register(Contact)
@@ -15,10 +15,6 @@ class ContactAdmin(admin.ModelAdmin):
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 3
-
-
-class ProductAvailableInline(admin.TabularInline):
-    model = ProductAvailable
 
 
 class ProductDetailInline(admin.TabularInline):
@@ -36,6 +32,16 @@ class ProductInfoInline(admin.TabularInline):
     extra = 3
 
 
+class ProductSizeInline(admin.TabularInline):
+    model = ProductSize
+    extra = 3
+
+
+class ProductColorInline(admin.TabularInline):
+    model = ProductColor
+    extra = 3
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('name', 'slug', 'price', 'category', 'brand', 'created_at')
@@ -43,13 +49,14 @@ class ProductAdmin(admin.ModelAdmin):
     fieldsets = (
         ('Product Details', {
             'fields': ('name', 'price', 'video_details', 'category', 'brand',
-                       'has_size', 'has_trial', 'trending_outfit')
+                       'is_available', 'has_trial', 'trending_outfit')
         }),
     )
 
     list_filter = ('created_at', )
     search_fields = ['code', 'name', 'brand']
-    inlines = [ProductAvailableInline, ProductImageInline, ProductDetailInline, YouWillGetInline, ProductInfoInline]
+    inlines = [ProductSizeInline, ProductColorInline, ProductImageInline, ProductDetailInline,
+               YouWillGetInline, ProductInfoInline]
 
 
 @admin.register(MyOrder)
@@ -80,12 +87,9 @@ admin.site.register(Trending)
 admin.site.register(TrendingOutfit)
 admin.site.register(Brand)
 admin.site.register(Review)
-admin.site.register(ReviewCountForAgree)
-admin.site.register(ReviewCountForDisagree)
-admin.site.register(ProductAvailable)
+admin.site.register(ReviewCount)
 admin.site.register(VideoReview)
-admin.site.register(VideoReviewCountForAgree)
-admin.site.register(VideoReviewCountForDisagree)
-admin.site.register(BackgroudImage)
+admin.site.register(VideoReviewCount)
+admin.site.register(CarouselImage)
 admin.site.register(ProductWithQuantity)
 admin.site.register(MyBag)
