@@ -1,8 +1,8 @@
 from .models import (Contact, Product, Category, Brand, Review, VideoReview, ProductImage, CarouselImage,
                      Trending, TrendingOutfit, ProductWithQuantity, MyBag, MyOrder,
                      ReviewCount, ProductDetail, YouWillGet, ProductInfo, VideoReviewCount)
-from rest_framework.generics import (ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView,
-                                     ListCreateAPIView, RetrieveUpdateAPIView, RetrieveUpdateDestroyAPIView)
+from rest_framework.generics import (ListAPIView, CreateAPIView, RetrieveAPIView, UpdateAPIView, DestroyAPIView,
+                                     ListCreateAPIView, RetrieveUpdateAPIView)
 # filters will use when implement search engine
 from .serializers import (ContactSerializer, ProductSerializer, CategorySerializer, BrandSerializer, ReviewSerializer,
                           VideoReviewSerializer, ProductImageSerializer, CarouselImageSerializer,
@@ -84,7 +84,7 @@ class ReviewCreate(CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class ReviewRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+class ReviewUpdateDestroy(UpdateAPIView, DestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = ReviewSerializer
 
@@ -117,7 +117,7 @@ class VideoReviewCreate(CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class VideoReviewRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+class VideoReviewUpdateDestroy(UpdateAPIView, DestroyAPIView):
     permission_classes = [IsAuthenticated]
     serializer_class = VideoReviewSerializer
 
@@ -152,14 +152,10 @@ class ProductWithQuantityCreate(CreateAPIView):
         serializer.save(user=self.request.user)
 
 
-class ProductWithQuantityRetrieveUpdateDestroy(RetrieveUpdateDestroyAPIView):
+class ProductWithQuantityUpdateDestroy(UpdateAPIView, DestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ProductWithQuantity.objects.all()
-
-    def get_serializer_class(self):
-        if self.request.method in ['GET']:
-            return ProductWithQuantityReadSerializer
-        return ProductWithQuantitySerializer
+    serializer_class = ProductWithQuantitySerializer
 
 
 class MyBagListCreate(ListCreateAPIView):
@@ -213,3 +209,14 @@ class MyOrderRetrieveUpdate(RetrieveUpdateAPIView):
         if self.request.method in ['GET']:
             return MyOrderReadSerializer
         return MyOrderSerializer
+
+
+# just list here, to see details we can use MyOrderRetrieveUpdate and can re confirm by this
+# but we differentiate it to make a filter easily, to get fast load advantage
+class MyCanceledOrderList(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    serializer_class = MyOrderReadSerializer
+
+    def get_queryset(self):
+        user = self.request.user
+        return MyOrder.objects.filter(user=user, is_canceled=True)

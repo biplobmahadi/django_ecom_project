@@ -61,6 +61,13 @@ COLOR_SELECT = (
     ('Red', 'Red'),
 )
 
+# color set for select choice option
+VOTE_SELECT = (
+    ('agreed', 'agreed'),
+    ('disagreed', 'disagreed'),
+)
+
+
 # payment set for select choice option
 PAYMENT_SELECT = (
     ('Cash On Delivery', 'Cash On Delivery'),
@@ -123,7 +130,6 @@ class Contact(models.Model):
 class Category(models.Model):
     slug = models.SlugField(max_length=50, unique=True, editable=False)
     category_name = models.CharField(max_length=50, unique=True, help_text="eg. (Men's Pant, Women's Shirt, IPhone, Football)")
-    category_img = models.ImageField(upload_to='category_img')
     created_at = models.DateTimeField(auto_now_add=True)
 
     def save(self, *args, **kwargs):
@@ -284,14 +290,13 @@ class Review(models.Model):
 
 class ReviewCount(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_count')
-    agreed = models.BooleanField(default=False)
-    disagreed = models.BooleanField(default=False)
+    vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
     user = models.OneToOneField(User, on_delete=models.CASCADE) # one user can do only one agreed or disagreed
     created_at = models.DateTimeField(auto_now=True)
     # here use auto_now=True, because when user update then this date will auto update
 
     def __str__(self):
-        return f'Review PK: {self.review.id} and agreed {self.agreed}'
+        return f'Review PK: {self.review.id} and vote {self.vote}'
 
 
 # @receiver(post_save, sender=Review)
@@ -342,13 +347,12 @@ class VideoReview(models.Model):
 
 class VideoReviewCount(models.Model):
     video_review = models.ForeignKey(VideoReview, on_delete=models.CASCADE, related_name='video_review_count')
-    agreed = models.BooleanField(default=False)
-    disagreed = models.BooleanField(default=False)
+    vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # one user can do only one agreed or disagreed
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Video Review PK: -> {self.video_review.id} and agreed {self.agreed}'
+        return f'Video Review PK: -> {self.video_review.id} and vote {self.vote}'
 
 
 # @receiver(post_save, sender=VideoReview)
@@ -393,20 +397,23 @@ class ProductWithQuantity(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     add_as_trial = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
+    # product with quantity get only one bag
+    my_bag = models.ForeignKey('MyBag', on_delete=models.CASCADE, related_name='product_with_quantity')
+    # MyBag is in below that's why using string
 
     def __str__(self):
         return f'Product: {self.product} -> Quantity: {self.quantity}'
 
 
 class MyBag(models.Model):
-    product_with_quantity = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)
-    sub_total = models.PositiveIntegerField()
+    # product_with_quantity = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)
+    sub_total = models.PositiveIntegerField()   # maybe it will remove soon
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    is_send_to_my_order = models.BooleanField(default=False)
+    is_send_to_my_order = models.BooleanField(default=False)    # it is important
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f'Total product in bag: {self.product_with_quantity.all().count()} -> User: {self.user.username}'
+        return f'Total Tk in bag: {self.sub_total} -> User: {self.user.username}'
 
 
 class MyOrder(models.Model):
@@ -424,15 +431,17 @@ class MyOrder(models.Model):
     receiver_area = models.CharField(max_length=100, choices=AREA_SELECT, blank=True)
     receiver_address = models.TextField(max_length=200, blank=True)
 
-    is_confirm = models.BooleanField(default=False)
-    is_payment_confirm = models.BooleanField(default=False)
+    is_confirmed = models.BooleanField(default=False, help_text='After user confirm by call then it will checked!')
+    is_canceled = models.BooleanField(default=False, help_text='Before is_confirmed checked user can cancel order!')
 
     payment = models.CharField(max_length=100, choices=PAYMENT_SELECT, blank=True)
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(auto_now_add=True)    # the day when user make order
     is_processing = models.BooleanField(default=False)
     is_placed = models.BooleanField(default=False)
     is_on_road = models.BooleanField(default=False)
     is_completed = models.BooleanField(default=False)
+    is_completed_at = models.DateTimeField(auto_now=True)    # the day when user got order in hand, auto_now used!
+    # after completed order 7 days happy return will start, is_completed == True then this button will appear
 
     def __str__(self):
         return f'Code: {self.order_code} -> User: {self.user.username}'
@@ -446,3 +455,8 @@ class CarouselImage(models.Model):
 
     def __str__(self):
         return f'{self.image}'
+
+
+# to return any ordered product
+# class ReturnRefund(models.Model):
+#     product_with_quantity = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)

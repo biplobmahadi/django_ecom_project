@@ -223,7 +223,7 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'slug', 'category_name', 'category_img', 'product']
+        fields = ['id', 'slug', 'category_name', 'product']
 
 
 class BrandSerializer(serializers.ModelSerializer):
@@ -273,7 +273,7 @@ class MyBagSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = MyBag
-        fields = '__all__'
+        fields = ['id', 'sub_total', 'is_send_to_my_order', 'user', 'product_with_quantity']
 
 
 class MyBagReadSerializer(MyBagSerializer):

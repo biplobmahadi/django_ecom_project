@@ -62,20 +62,20 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(MyOrder)
 class MyOrderAdmin(admin.ModelAdmin):
     list_display = ('order_code', 'user', 'receiver_name', 'receiver_phone',
-                    'receiver_division', 'created_at', 'is_confirm', 'is_payment_confirm', 'is_completed')
+                    'receiver_division', 'created_at', 'is_confirmed', 'is_canceled', 'is_completed')
     fieldsets = (
         ('Receiver Details', {
             'fields': ('receiver_name', 'receiver_phone', 'receiver_other_phone', 'receiver_division', 'receiver_city',
                        'receiver_area', 'receiver_address')
         }),
         ('Product Details', {
-            'fields': ('my_bag', 'user', 'total', 'total_payable', 'payment', 'is_confirm', 'is_payment_confirm')
+            'fields': ('my_bag', 'user', 'total', 'total_payable', 'payment', 'is_confirmed', 'is_canceled')
         }),
         ('Conditions', {
             'fields': ('is_processing', 'is_placed', 'is_on_road', 'is_completed')
         }),
     )
-    list_filter = ('created_at', 'is_confirm', 'is_payment_confirm', 'is_processing', 'is_placed', 'is_on_road',
+    list_filter = ('created_at', 'is_confirmed', 'is_canceled', 'is_processing', 'is_placed', 'is_on_road',
                    'is_completed', 'receiver_division',
                    'receiver_city', 'receiver_area')
     search_fields = ['order_code', 'user', 'receiver_name', 'receiver_phone']

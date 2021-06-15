@@ -23,6 +23,9 @@ schema_view = get_schema_view(
    permission_classes=[permissions.AllowAny],
 )
 
+admin.site.site_header = 'Ignore Administration'    # default: "Django Administration"
+admin.site.index_title = 'Features Area'    # default: "Site administration"
+admin.site.site_title = 'Ignore Site Admin'    # default: "Django site admin"
 
 urlpatterns = [
     # only registered user email can get the email, others can't get the email... it's awesome!!!
@@ -30,29 +33,30 @@ urlpatterns = [
 
     path('admin/', admin.site.urls),
 
-    path('contacts/', views.ContactCreate.as_view()),
-    path('products/<slug:slug>/', views.ProductRetrieve.as_view()),
+    path('contact/', views.ContactCreate.as_view()),
+    path('product/<slug:slug>/', views.ProductRetrieve.as_view()),
     path('category/<slug:slug>/', views.CategoryRetrieve.as_view()),
     path('brands/', views.BrandList.as_view()),
-    path('brands/<slug:slug>/', views.BrandRetrieve.as_view()),
+    path('brand/<slug:slug>/', views.BrandRetrieve.as_view()),
     # this is for to access reviewed product from user pages
-    path('reviews-read/', views.ReviewRead.as_view()),
-    path('reviews-create/', views.ReviewCreate.as_view()),
-    path('reviews/<int:pk>/', views.ReviewRetrieveUpdateDestroy.as_view()),
-    path('reviews-count-update/<int:pk>/', views.ReviewCountUpdate.as_view()),
+    path('reviews/', views.ReviewRead.as_view()),
+    path('review-create/', views.ReviewCreate.as_view()),
+    path('review/<int:pk>/', views.ReviewUpdateDestroy.as_view()),
+    path('review-count-update/<int:pk>/', views.ReviewCountUpdate.as_view()),
     # this is for to access reviewed product from user pages
-    path('video-reviews-read/', views.VideoReviewRead.as_view()),
-    path('video-reviews-create/', views.VideoReviewCreate.as_view()),
-    path('video-reviews/<int:pk>/', views.VideoReviewRetrieveUpdateDestroy.as_view()),
-    path('video-reviews-count-update/<int:pk>/', views.VideoReviewCountUpdate.as_view()),
+    path('video-reviews/', views.VideoReviewRead.as_view()),
+    path('video-review-create/', views.VideoReviewCreate.as_view()),
+    path('video-review/<int:pk>/', views.VideoReviewUpdateDestroy.as_view()),
+    path('video-review-count-update/<int:pk>/', views.VideoReviewCountUpdate.as_view()),
     path('carousel-images/', views.CarouselImageList.as_view()),
     path('trending/<slug:slug>/', views.TrendingRetrieve.as_view()),
     path('trending-outfit/<slug:slug>/', views.TrendingOutfitRetrieve.as_view()),
     path('product-with-quantity/', views.ProductWithQuantityCreate.as_view()),
-    path('product-with-quantity/<int:pk>/', views.ProductWithQuantityRetrieveUpdateDestroy.as_view()),
-    path('my-bag/', views.MyBagListCreate.as_view()),
+    path('product-with-quantity/<int:pk>/', views.ProductWithQuantityUpdateDestroy.as_view()),
+    path('my-bags/', views.MyBagListCreate.as_view()),
     path('my-bag/<int:pk>/', views.MyBagUpdate.as_view()),
-    path('my-order/', views.MyOrderListCreate.as_view()),
+    path('my-orders/', views.MyOrderListCreate.as_view()),
+    path('my-canceled-orders/', views.MyCanceledOrderList.as_view()),
     path('my-order/<slug:order_code>/', views.MyOrderRetrieveUpdate.as_view()),
 
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
