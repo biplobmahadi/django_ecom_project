@@ -177,10 +177,12 @@ REST_AUTH_SERIALIZERS = {
 REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'all.serializers.MyRegisterSerializer',
 }
+# json web token generate instead of only token
+# REST_USE_JWT = True
 
 ACCOUNT_ADAPTER = 'all.adapter.DefaultAccountAdapterCustom'
 URL_FRONT = 'http://localhost:3000/'
 
 # sendgrid email will never the same of superuser email
 # email account you use for SendGrid is not the same email account you have for your superuser
-
+# no need of sendgrid or mailgun

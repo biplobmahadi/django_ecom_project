@@ -54,6 +54,8 @@ CacheControl = "==0.12.6"
 PyJWT = "==2.0.1"
 pyyaml = "*"
 uritemplate = "*"
+djangorestframework-jwt = "*"
+django-reverse-admin = "*"
 
 [requires]
 python_version = "3.8"

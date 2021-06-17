@@ -3,6 +3,8 @@ from .models import (Contact, Product, Category, Brand, Review, VideoReview, Pro
                      CarouselImage, Trending, TrendingOutfit, UserProfile, ProductWithQuantity, MyBag, MyOrder,
                      ReviewCount, ProductDetail, YouWillGet, ProductInfo,
                     ProductSize, ProductColor, VideoReviewCount)
+from django.utils.html import format_html
+from django.urls import reverse
 
 
 @admin.register(Contact)
@@ -59,28 +61,6 @@ class ProductAdmin(admin.ModelAdmin):
                YouWillGetInline, ProductInfoInline]
 
 
-@admin.register(MyOrder)
-class MyOrderAdmin(admin.ModelAdmin):
-    list_display = ('order_code', 'user', 'receiver_name', 'receiver_phone',
-                    'receiver_division', 'created_at', 'is_confirmed', 'is_canceled', 'is_completed')
-    fieldsets = (
-        ('Receiver Details', {
-            'fields': ('receiver_name', 'receiver_phone', 'receiver_other_phone', 'receiver_division', 'receiver_city',
-                       'receiver_area', 'receiver_address')
-        }),
-        ('Product Details', {
-            'fields': ('my_bag', 'user', 'total', 'total_payable', 'payment', 'is_confirmed', 'is_canceled')
-        }),
-        ('Conditions', {
-            'fields': ('is_processing', 'is_placed', 'is_on_road', 'is_completed')
-        }),
-    )
-    list_filter = ('created_at', 'is_confirmed', 'is_canceled', 'is_processing', 'is_placed', 'is_on_road',
-                   'is_completed', 'receiver_division',
-                   'receiver_city', 'receiver_area')
-    search_fields = ['order_code', 'user', 'receiver_name', 'receiver_phone']
-
-
 admin.site.register(UserProfile)
 admin.site.register(Category)
 admin.site.register(Trending)
@@ -91,5 +71,73 @@ admin.site.register(ReviewCount)
 admin.site.register(VideoReview)
 admin.site.register(VideoReviewCount)
 admin.site.register(CarouselImage)
-admin.site.register(ProductWithQuantity)
-admin.site.register(MyBag)
+# admin.site.register(YouWillGet)    --> we can also access here, but use in inline with product
+# admin.site.register(MyBag)
+
+
+@admin.register(ProductWithQuantity)
+class ProductWithQuantityAdmin(admin.ModelAdmin):
+    list_display = ('id', 'product', 'quantity', 'size', 'total_cost')
+    fields = ('product', 'quantity', 'size', 'total_cost')
+    readonly_fields = ('total_cost', )
+    list_filter = ('created_at', )
+
+
+class ProductWithQuantityInline(admin.TabularInline):
+    model = ProductWithQuantity
+    extra = 1
+
+
+@admin.register(MyBag)
+class MyBagAdmin(admin.ModelAdmin):
+    list_display = ('id', 'sub_total', 'user', 'is_send_to_my_order', 'created_at')
+    fields = ('sub_total', 'user', 'is_send_to_my_order')
+    readonly_fields = ('sub_total',)
+    list_filter = ('created_at',)
+    inlines = [ProductWithQuantityInline]
+
+
+# def linkify(field_name):
+#     """
+#     Converts a foreign key value into clickable links.
+#     It will work with list_display list. eg. [linkify(field_name="my_bag")]
+#
+#     If field_name is 'parent', link text will be str(obj.parent)
+#     Link will be admin url for the admin url for obj.parent.id:change
+#     """
+#     def _linkify(obj):
+#         linked_obj = getattr(obj, field_name)
+#         if linked_obj is None:
+#             return '-'
+#         app_label = linked_obj._meta.app_label
+#         model_name = linked_obj._meta.model_name
+#         view_name = f'admin:{app_label}_{model_name}_change'
+#         link_url = reverse(view_name, args=[linked_obj.pk])
+#         return format_html('<a href="{}">{}</a>', link_url, linked_obj)
+#
+#     _linkify.short_description = field_name  # Sets column name
+#     return _linkify
+
+
+@admin.register(MyOrder)
+class MyOrderAdmin(admin.ModelAdmin):
+    list_display = ('order_code', 'user', 'receiver_name', 'receiver_phone',
+                    'receiver_division', 'created_at', 'is_confirmed', 'is_canceled', 'is_completed')
+    fieldsets = (
+        ('Receiver Details', {
+            'fields': ('receiver_name', 'receiver_phone', 'receiver_other_phone', 'receiver_division', 'receiver_city',
+                       'receiver_area', 'receiver_address')
+        }),
+        ('Product Details', {
+            'fields': ('my_bag', 'user', 'total_product_cost', 'total_payable_with_delivery', 'payment', 'is_confirmed', 'is_canceled'),
+            'readonly_fields': ('total_product_cost', 'total_payable_with_delivery')
+        }),
+        ('Conditions', {
+            'fields': ('is_processing', 'is_placed', 'is_on_road', 'is_completed')
+        }),
+    )
+    list_filter = ('created_at', 'is_confirmed', 'is_canceled', 'is_processing', 'is_placed', 'is_on_road',
+                   'is_completed', 'receiver_division',
+                   'receiver_city', 'receiver_area')
+    search_fields = ['order_code', 'user', 'receiver_name', 'receiver_phone']
+

@@ -28,9 +28,6 @@ admin.site.index_title = 'Features Area'    # default: "Site administration"
 admin.site.site_title = 'Ignore Site Admin'    # default: "Django site admin"
 
 urlpatterns = [
-    # only registered user email can get the email, others can't get the email... it's awesome!!!
-    path('password-reset/confirm/<uidb64>/<token>/', TemplateView.as_view(), name='password_reset_confirm'),
-
     path('admin/', admin.site.urls),
 
     path('contact/', views.ContactCreate.as_view()),
@@ -52,21 +49,24 @@ urlpatterns = [
     path('trending/<slug:slug>/', views.TrendingRetrieve.as_view()),
     path('trending-outfit/<slug:slug>/', views.TrendingOutfitRetrieve.as_view()),
     path('product-with-quantity/', views.ProductWithQuantityCreate.as_view()),
-    path('product-with-quantity/<int:pk>/', views.ProductWithQuantityUpdateDestroy.as_view()),
+    path('product-with-quantity/<slug:pk>/', views.ProductWithQuantityUpdateDestroy.as_view()),
     path('my-bags/', views.MyBagListCreate.as_view()),
-    path('my-bag/<int:pk>/', views.MyBagUpdate.as_view()),
+    path('my-bag/<slug:pk>/', views.MyBagUpdate.as_view()),
     path('my-orders/', views.MyOrderListCreate.as_view()),
     path('my-canceled-orders/', views.MyCanceledOrderList.as_view()),
     path('my-order/<slug:order_code>/', views.MyOrderRetrieveUpdate.as_view()),
 
-    path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    # path('api-auth/', include('rest_framework.urls', namespace='rest_framework')), --> no need
     path('rest-auth/', include('rest_auth.urls')),
 
     path('rest-auth/registration/', include('rest_auth.registration.urls')),
     path('rest-auth/facebook/', views.FacebookLogin.as_view(), name='fb_login'),
     path('rest-auth/google/', views.GoogleLogin.as_view(), name='google_login'),
     path('rest-auth/social-signup/', TemplateView.as_view(), name='socialaccount_signup'),
+    # varification email sent route use for sending email successfully, name is important
     path('rest-auth/varification-email-sent/', TemplateView.as_view(), name='account_email_verification_sent'),
+    # only registered user email can get the email, others can't get the email... it's awesome!!!
+    path('password-reset/confirm/<uidb64>/<token>/', TemplateView.as_view(), name='password_reset_confirm'),
 
     # doc path
     # path(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),

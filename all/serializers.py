@@ -257,6 +257,7 @@ class TrendingSerializer(serializers.ModelSerializer):
 
 
 class ProductWithQuantitySerializer(serializers.ModelSerializer):
+    total_cost = serializers.ReadOnlyField()
 
     class Meta:
         model = ProductWithQuantity
@@ -270,6 +271,7 @@ class ProductWithQuantityReadSerializer(ProductWithQuantitySerializer):
 
 class MyBagSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
+    total = serializers.ReadOnlyField()
 
     class Meta:
         model = MyBag

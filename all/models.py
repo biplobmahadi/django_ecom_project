@@ -197,7 +197,10 @@ class Product(models.Model):
     trending_outfit = models.ForeignKey(TrendingOutfit, on_delete=models.SET_NULL, null=True, blank=True, related_name='product')
 
     has_trial = models.BooleanField(default=False)
-    is_available = models.BooleanField(default=False) # available number will not be added
+    is_available = models.BooleanField(default=False)   # need to remove
+    available_limit = models.PositiveIntegerField(default=0)
+    # user can't order more than this limit, making availability in slightly done
+    # when user add with single click then check it with product with quantity
 
     video_details = models.URLField(help_text='provide a youtube link')
     created_at = models.DateTimeField(auto_now_add=True)
@@ -389,28 +392,40 @@ class VideoReviewCount(models.Model):
 
 
 class ProductWithQuantity(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     product = models.ForeignKey(Product, on_delete=models.DO_NOTHING, related_name='product_with_quantity')
     quantity = models.PositiveIntegerField(default=1)
     size = models.CharField(max_length=10, choices=SIZE_SELECT, blank=True)
     color = models.CharField(max_length=20, choices=COLOR_SELECT, blank=True)
-    cost = models.PositiveIntegerField()
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     add_as_trial = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
-    # product with quantity get only one bag
+    # productwithquantity get only one bag
     my_bag = models.ForeignKey('MyBag', on_delete=models.CASCADE, related_name='product_with_quantity')
     # MyBag is in below that's why using string
 
+    @property
+    def total_cost(self):
+        return self.product.price * self.quantity
+
     def __str__(self):
-        return f'Product: {self.product} -> Quantity: {self.quantity}'
+        return f'Product: {self.product} -> Quantity: {self.quantity} -> Total: {self.total_cost}'
 
 
 class MyBag(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     # product_with_quantity = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)
-    sub_total = models.PositiveIntegerField()   # maybe it will remove soon
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_send_to_my_order = models.BooleanField(default=False)    # it is important
     created_at = models.DateTimeField(auto_now_add=True)
+
+    @property
+    def sub_total(self):
+        product_with_quantity = self.product_with_quantity.all()
+        total = 0
+        for i in product_with_quantity:
+            total += i.total_cost
+        return total
 
     def __str__(self):
         return f'Total Tk in bag: {self.sub_total} -> User: {self.user.username}'
@@ -419,8 +434,6 @@ class MyBag(models.Model):
 class MyOrder(models.Model):
     order_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     my_bag = models.OneToOneField(MyBag, on_delete=models.DO_NOTHING, related_name='my_order')
-    total = models.PositiveIntegerField()
-    total_payable = models.PositiveIntegerField()
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     receiver_name = models.CharField(max_length=30, blank=True)
@@ -443,6 +456,14 @@ class MyOrder(models.Model):
     is_completed_at = models.DateTimeField(auto_now=True)    # the day when user got order in hand, auto_now used!
     # after completed order 7 days happy return will start, is_completed == True then this button will appear
 
+    @property
+    def total_product_cost(self):
+        return self.my_bag.sub_total
+
+    @property
+    def total_payable_with_delivery(self):
+        return self.my_bag.sub_total + 50
+
     def __str__(self):
         return f'Code: {self.order_code} -> User: {self.user.username}'
 
@@ -460,3 +481,4 @@ class CarouselImage(models.Model):
 # to return any ordered product
 # class ReturnRefund(models.Model):
 #     product_with_quantity = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)
+# it will done after everything
