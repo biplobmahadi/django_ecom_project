@@ -186,6 +186,3 @@ URL_FRONT = 'http://localhost:3000/'
 # sendgrid email will never the same of superuser email
 # email account you use for SendGrid is not the same email account you have for your superuser
 # no need of sendgrid or mailgun
-
-# changing user id as uuid in models
-AUTH_USER_MODEL = 'all.MyUser'

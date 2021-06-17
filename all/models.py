@@ -3,7 +3,7 @@ from django.utils.text import slugify
 from phonenumber_field.modelfields import PhoneNumberField
 from django.core.validators import MaxValueValidator
 import uuid
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 # for sending mail
@@ -74,13 +74,8 @@ PAYMENT_SELECT = (
 )
 
 
-# changing user id as uuid
-class MyUser(AbstractUser):
-    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
-
-
 class UserProfile(models.Model):
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
     # custom fields for user where one user have only one profile
     phone = PhoneNumberField(blank=True, null=True)
     division = models.CharField(max_length=100, choices=DIVISION_SELECT, blank=True, null=True)
@@ -93,13 +88,13 @@ class UserProfile(models.Model):
 
 
 # create the instance for user and userprofile
-@receiver(post_save, sender=MyUser)
+@receiver(post_save, sender=User)
 def create_user_profile(sender, instance, created, **kwargs):
     if created:
         UserProfile.objects.create(user=instance)
 
 
-@receiver(post_save, sender=MyUser)
+@receiver(post_save, sender=User)
 def save_user_profile(sender, instance, **kwargs):
     instance.userprofile.save()
 
@@ -288,7 +283,7 @@ class Review(models.Model):
     review_detail = models.TextField()
     rating_star = models.PositiveIntegerField(validators=[MaxValueValidator(5)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True)
     # here use auto_now=True, because when user update then this date will auto update
 
@@ -299,7 +294,7 @@ class Review(models.Model):
 class ReviewCount(models.Model):
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_count')
     vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE) # one user can do only one agreed or disagreed
+    user = models.OneToOneField(User, on_delete=models.CASCADE) # one user can do only one agreed or disagreed
     created_at = models.DateTimeField(auto_now=True)
     # here use auto_now=True, because when user update then this date will auto update
 
@@ -345,7 +340,7 @@ class VideoReview(models.Model):
     link = models.URLField(help_text='provide a youtube link')
     # this will no rating, only review
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='video_review')
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(auto_now=True) 
     # here use auto_now=True, because when user update then this date will auto update
 
@@ -356,7 +351,7 @@ class VideoReview(models.Model):
 class VideoReviewCount(models.Model):
     video_review = models.ForeignKey(VideoReview, on_delete=models.CASCADE, related_name='video_review_count')
     vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
-    user = models.OneToOneField(MyUser, on_delete=models.CASCADE)  # one user can do only one agreed or disagreed
+    user = models.OneToOneField(User, on_delete=models.CASCADE)  # one user can do only one agreed or disagreed
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
@@ -402,7 +397,7 @@ class ProductWithQuantity(models.Model):
     quantity = models.PositiveIntegerField(default=1)
     size = models.CharField(max_length=10, choices=SIZE_SELECT, blank=True)
     color = models.CharField(max_length=20, choices=COLOR_SELECT, blank=True)
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     add_as_trial = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     # productwithquantity get only one bag
@@ -420,7 +415,7 @@ class ProductWithQuantity(models.Model):
 class MyBag(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     # product_with_quantity = models.ManyToManyField(ProductWithQuantity, related_name='my_bag', blank=True)
-    user = models.ForeignKey(MyUser, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     is_send_to_my_order = models.BooleanField(default=False)    # it is important
     created_at = models.DateTimeField(auto_now_add=True)
 
@@ -439,7 +434,7 @@ class MyBag(models.Model):
 class MyOrder(models.Model):
     order_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     my_bag = models.OneToOneField(MyBag, on_delete=models.DO_NOTHING, related_name='my_order')
-    user = models.ForeignKey(MyUser, on_delete=models.DO_NOTHING)
+    user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
     receiver_name = models.CharField(max_length=30, blank=True)
     receiver_phone = PhoneNumberField(blank=True)
