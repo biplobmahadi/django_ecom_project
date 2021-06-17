@@ -5,6 +5,10 @@ from .models import (Contact, Product, Category, Brand, Review, VideoReview, Pro
                     ProductSize, ProductColor, VideoReviewCount)
 from django.utils.html import format_html
 from django.urls import reverse
+from django.contrib.auth.admin import UserAdmin
+from .models import MyUser
+
+admin.site.register(MyUser, UserAdmin)
 
 
 @admin.register(Contact)
