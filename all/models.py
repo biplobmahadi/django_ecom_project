@@ -75,6 +75,7 @@ PAYMENT_SELECT = (
 
 
 class UserProfile(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     # custom fields for user where one user have only one profile
     phone = PhoneNumberField(blank=True, null=True)
@@ -100,6 +101,7 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class Contact(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     name = models.CharField(max_length=30)
     email = models.EmailField()
     phone = PhoneNumberField()
@@ -128,6 +130,7 @@ class Contact(models.Model):
 
 
 class Category(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     slug = models.SlugField(max_length=50, unique=True, editable=False)
     category_name = models.CharField(max_length=50, unique=True, help_text="eg. (Men's Pant, Women's Shirt, IPhone, Football)")
     created_at = models.DateTimeField(auto_now_add=True)
@@ -142,6 +145,7 @@ class Category(models.Model):
 
 
 class Brand(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     slug = models.SlugField(max_length=50, unique=True, editable=False)
     brand_name = models.CharField(max_length=50, unique=True)
     brand_img = models.ImageField(upload_to='brand_img')
@@ -157,6 +161,7 @@ class Brand(models.Model):
 
 
 class Trending(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     slug = models.SlugField(max_length=50, unique=True, editable=False)
     trend_name = models.CharField(max_length=50, unique=True)
     trend_img = models.ImageField(upload_to='trend_img')
@@ -172,6 +177,7 @@ class Trending(models.Model):
 
 
 class TrendingOutfit(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     slug = models.SlugField(max_length=50, unique=True, editable=False)
     trending = models.ForeignKey(Trending, on_delete=models.CASCADE, related_name='trending_outfit')
     trend_outfit_name = models.CharField(max_length=50, unique=True)
@@ -188,6 +194,7 @@ class TrendingOutfit(models.Model):
 
 
 class Product(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     slug = models.SlugField(max_length=150, unique=True, editable=False)
     # slug max_length more than name because of there price will include
     name = models.CharField(max_length=100, unique=True)
@@ -230,6 +237,7 @@ class Product(models.Model):
 
 
 class ProductSize(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     size = models.CharField(max_length=10, choices=SIZE_SELECT)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_size')
 
@@ -238,6 +246,7 @@ class ProductSize(models.Model):
 
 
 class ProductColor(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     color = models.CharField(max_length=20, choices=COLOR_SELECT)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_color')
 
@@ -246,6 +255,7 @@ class ProductColor(models.Model):
 
 
 class ProductDetail(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     title = models.CharField(max_length=100)
     value = models.CharField(max_length=100)
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_detail')
@@ -256,6 +266,7 @@ class ProductDetail(models.Model):
 
 
 class ProductImage(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     image = models.ImageField(upload_to='product_image')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_image')
 
@@ -264,6 +275,7 @@ class ProductImage(models.Model):
 
 
 class YouWillGet(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     gift = models.CharField(max_length=100, help_text='eg. (2 Lottery, One IPhone 12 Max Pro)')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='you_will_get')
 
@@ -272,6 +284,7 @@ class YouWillGet(models.Model):
 
 
 class ProductInfo(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     info = models.CharField(max_length=100, help_text='eg. (6 Months Warranty, 3 Month Guaranty)')
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='product_info')
 
@@ -280,6 +293,7 @@ class ProductInfo(models.Model):
 
 
 class Review(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     review_detail = models.TextField()
     rating_star = models.PositiveIntegerField(validators=[MaxValueValidator(5)])
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='review')
@@ -292,6 +306,7 @@ class Review(models.Model):
 
 
 class ReviewCount(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_count')
     vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
     user = models.OneToOneField(User, on_delete=models.CASCADE) # one user can do only one agreed or disagreed
@@ -337,6 +352,7 @@ class ReviewCount(models.Model):
 
 
 class VideoReview(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     link = models.URLField(help_text='provide a youtube link')
     # this will no rating, only review
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='video_review')
@@ -349,6 +365,7 @@ class VideoReview(models.Model):
 
 
 class VideoReviewCount(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     video_review = models.ForeignKey(VideoReview, on_delete=models.CASCADE, related_name='video_review_count')
     vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
     user = models.OneToOneField(User, on_delete=models.CASCADE)  # one user can do only one agreed or disagreed
@@ -432,7 +449,7 @@ class MyBag(models.Model):
 
 
 class MyOrder(models.Model):
-    order_code = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     my_bag = models.OneToOneField(MyBag, on_delete=models.DO_NOTHING, related_name='my_order')
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
@@ -470,6 +487,7 @@ class MyOrder(models.Model):
 
 # this is for carousel
 class CarouselImage(models.Model):
+    id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     image = models.ImageField(upload_to='background_image')
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -156,7 +156,6 @@ class ProductWithQuantityUpdateDestroy(UpdateAPIView, DestroyAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ProductWithQuantity.objects.all()
     serializer_class = ProductWithQuantitySerializer
-    # lookup_field = 'code'
 
 
 class MyBagListCreate(ListCreateAPIView):
@@ -180,7 +179,6 @@ class MyBagUpdate(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = MyBag.objects.all()
     serializer_class = MyBagSerializer
-    # lookup_field = 'code'
 
 
 class MyOrderListCreate(ListCreateAPIView):
@@ -202,7 +200,6 @@ class MyOrderListCreate(ListCreateAPIView):
 class MyOrderRetrieveUpdate(RetrieveUpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = MyOrder.objects.all()
-    lookup_field = 'order_code'
 
     def get_serializer_class(self):
         if self.request.method in ['GET']:

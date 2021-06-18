@@ -121,7 +121,7 @@ class MyBagAdmin(admin.ModelAdmin):
 
 @admin.register(MyOrder)
 class MyOrderAdmin(admin.ModelAdmin):
-    list_display = ('order_code', 'user', 'receiver_name', 'receiver_phone',
+    list_display = ('id', 'user', 'receiver_name', 'receiver_phone',
                     'receiver_division', 'created_at', 'is_confirmed', 'is_canceled', 'is_completed')
     fieldsets = (
         ('Receiver Details', {
