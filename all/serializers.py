@@ -204,8 +204,8 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
-        fields = ['id', 'slug', 'name', 'price', 'brand', 'video_details',
-                  'product_image', 'is_available', 'has_trial', 'review', 'video_review',
+        fields = ['id', 'slug', 'name', 'price', 'brand', 'category', 'video_details',
+                  'product_image', 'is_available', 'available_limit', 'has_trial', 'review', 'video_review',
                   'product_detail', 'you_will_get', 'product_info', 'product_color', 'product_size']
         depth = 1
 
@@ -271,15 +271,12 @@ class ProductWithQuantityReadSerializer(ProductWithQuantitySerializer):
 
 class MyBagSerializer(serializers.ModelSerializer):
     user = serializers.ReadOnlyField(source='user.username')
-    total = serializers.ReadOnlyField()
+    sub_total = serializers.ReadOnlyField()
+    product_with_quantity = ProductWithQuantityReadSerializer(read_only=True, many=True)
 
     class Meta:
         model = MyBag
         fields = ['id', 'sub_total', 'is_send_to_my_order', 'user', 'product_with_quantity']
-
-
-class MyBagReadSerializer(MyBagSerializer):
-    product_with_quantity = ProductWithQuantityReadSerializer(read_only=True, many=True)
 
 
 class MyOrderSerializer(serializers.ModelSerializer):
@@ -293,4 +290,4 @@ class MyOrderSerializer(serializers.ModelSerializer):
 
 
 class MyOrderReadSerializer(MyOrderSerializer):
-    my_bag = MyBagReadSerializer(read_only=True)
+    my_bag = MyBagSerializer(read_only=True)

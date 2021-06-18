@@ -7,7 +7,7 @@ from rest_framework.generics import (ListAPIView, CreateAPIView, RetrieveAPIView
 from .serializers import (ContactSerializer, ProductSerializer, CategorySerializer, BrandSerializer, ReviewSerializer,
                           VideoReviewSerializer, ProductImageSerializer, CarouselImageSerializer,
                           TrendingSerializer, TrendingOutfitSerializer, ProductWithQuantitySerializer, MyBagSerializer,
-                          MyOrderSerializer, ProductWithQuantityReadSerializer, MyBagReadSerializer,
+                          MyOrderSerializer,
                           MyOrderReadSerializer, ReviewReadSerializer, VideoReviewReadSerializer, ReviewCountSerializer,
                           ProductDetailSerializer, YouWillGetSerializer, ProductInfoSerializer,
                           VideoReviewCountSerializer)
@@ -160,15 +160,11 @@ class ProductWithQuantityUpdateDestroy(UpdateAPIView, DestroyAPIView):
 
 class MyBagListCreate(ListCreateAPIView):
     permission_classes = [IsAuthenticated]
+    serializer_class = MyBagSerializer
 
     def get_queryset(self):
         user = self.request.user
         return MyBag.objects.filter(user=user, is_send_to_my_order=False)
-
-    def get_serializer_class(self):
-        if self.request.method in ['GET']:
-            return MyBagReadSerializer
-        return MyBagSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
