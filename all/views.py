@@ -60,6 +60,15 @@ class BrandRetrieve(RetrieveAPIView):
     lookup_field = 'slug'
 
 
+class ReviewCountCreate(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = VideoReviewCount.objects.all()
+    serializer_class = ReviewCountSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
 class ReviewCountUpdate(UpdateAPIView):
     permission_classes = [IsAuthenticated]
     queryset = ReviewCount.objects.all()
@@ -91,6 +100,15 @@ class ReviewUpdateDestroy(UpdateAPIView, DestroyAPIView):
     def get_queryset(self):
         user = self.request.user
         return Review.objects.filter(user=user)
+
+
+class VideoReviewCountCreate(CreateAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = VideoReviewCount.objects.all()
+    serializer_class = VideoReviewCountSerializer
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class VideoReviewCountUpdate(UpdateAPIView):

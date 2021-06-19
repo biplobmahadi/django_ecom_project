@@ -309,7 +309,9 @@ class ReviewCount(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     review = models.ForeignKey(Review, on_delete=models.CASCADE, related_name='review_count')
     vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
-    user = models.OneToOneField(User, on_delete=models.CASCADE) # one user can do only one agreed or disagreed
+    user = models.ForeignKey(User, on_delete=models.CASCADE) # not onetoone
+    # user can do one agreed or disagreed for one review which will maintain with frontend, said a msg already done
+    # but user can make many review count row for other review
     created_at = models.DateTimeField(auto_now=True)
     # here use auto_now=True, because when user update then this date will auto update
 
@@ -368,7 +370,9 @@ class VideoReviewCount(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
     video_review = models.ForeignKey(VideoReview, on_delete=models.CASCADE, related_name='video_review_count')
     vote = models.CharField(max_length=10, choices=VOTE_SELECT, default='agreed')    # need to remove default
-    user = models.OneToOneField(User, on_delete=models.CASCADE)  # one user can do only one agreed or disagreed
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # not onetoone
+    # user can do one agreed or disagreed for one video review which will maintain with frontend, said a msg already done
+    # but user can make many video review count row for other video review
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):

@@ -167,6 +167,7 @@ class ProductColorSerializer(serializers.ModelSerializer):
 
 
 class ReviewCountSerializer(serializers.ModelSerializer):
+    user = UserSerializer(read_only=True)
 
     class Meta:
         model = ReviewCount
@@ -183,7 +184,8 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 
 class VideoReviewCountSerializer(serializers.ModelSerializer):
-
+    user = UserSerializer(read_only=True)
+    
     class Meta:
         model = VideoReviewCount
         fields = '__all__'

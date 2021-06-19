@@ -39,11 +39,13 @@ urlpatterns = [
     path('reviews/', views.ReviewRead.as_view()),
     path('review-create/', views.ReviewCreate.as_view()),
     path('review/<uuid:pk>/', views.ReviewUpdateDestroy.as_view()),
+    path('review-count-create/', views.ReviewCountCreate.as_view()),
     path('review-count-update/<uuid:pk>/', views.ReviewCountUpdate.as_view()),
     # this is for to access reviewed product from user pages
     path('video-reviews/', views.VideoReviewRead.as_view()),
     path('video-review-create/', views.VideoReviewCreate.as_view()),
     path('video-review/<uuid:pk>/', views.VideoReviewUpdateDestroy.as_view()),
+    path('video-review-count-create/', views.VideoReviewCountCreate.as_view()),
     path('video-review-count-update/<uuid:pk>/', views.VideoReviewCountUpdate.as_view()),
     path('carousel-images/', views.CarouselImageList.as_view()),
     path('trending/<slug:slug>/', views.TrendingRetrieve.as_view()),
