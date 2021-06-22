@@ -442,7 +442,7 @@ class MyBag(models.Model):
 
     @property
     def sub_total(self):
-        product_with_quantity = self.product_with_quantity.all()
+        product_with_quantity = self.product_with_quantity.filter(add_as_trial=False)
         total = 0
         for i in product_with_quantity:
             total += i.total_cost
