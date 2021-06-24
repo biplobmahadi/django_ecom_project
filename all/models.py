@@ -462,19 +462,19 @@ class MyOrder(models.Model):
     my_bag = models.OneToOneField(MyBag, on_delete=models.DO_NOTHING, related_name='my_order')
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
 
-    receiver_name = models.CharField(max_length=30, blank=True)
-    receiver_phone = PhoneNumberField(blank=True)
+    receiver_name = models.CharField(max_length=50)
+    receiver_phone = PhoneNumberField()
     receiver_other_phone = PhoneNumberField(blank=True)
-    receiver_division = models.CharField(max_length=100, choices=DIVISION_SELECT, blank=True)
-    receiver_city = models.CharField(max_length=100, choices=CITY_SELECT, blank=True)
-    receiver_area = models.CharField(max_length=100, choices=AREA_SELECT, blank=True)
-    receiver_address = models.TextField(max_length=200, blank=True)
+    receiver_division = models.CharField(max_length=100, choices=DIVISION_SELECT)
+    receiver_city = models.CharField(max_length=100, choices=CITY_SELECT)
+    receiver_area = models.CharField(max_length=100, choices=AREA_SELECT)
+    receiver_address = models.TextField(max_length=200)
 
     # After user confirm by call then user can't cancel order, before confirm user can cancel
     # user also filter his cancelled order using this field
     order_status = models.CharField(max_length=10, choices=ORDER_STATUS_SELECT, blank=True)
 
-    payment = models.CharField(max_length=100, choices=PAYMENT_SELECT, blank=True)
+    payment = models.CharField(max_length=100, choices=PAYMENT_SELECT)
     created_at = models.DateTimeField(auto_now_add=True)    # the day when user make order
     is_processing = models.BooleanField(default=False)
     is_placed = models.BooleanField(default=False)

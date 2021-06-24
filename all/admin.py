@@ -129,7 +129,10 @@ class MyOrderAdmin(admin.ModelAdmin):
                        'receiver_area', 'receiver_address')
         }),
         ('Product Details', {
-            'fields': ('my_bag', 'user', 'total_product_cost', 'total_payable_with_delivery', 'payment', 'order_status')   
+            'fields': ('my_bag', 'user', 'total_product_cost', 'total_payable_with_delivery', 'payment')   
+        }),
+        ('Order Status', {
+            'fields': ('order_status', )   
         }),
         ('Conditions', {
             'fields': ('is_processing', 'is_placed', 'is_on_road', 'is_completed')
