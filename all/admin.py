@@ -121,22 +121,22 @@ class MyBagAdmin(admin.ModelAdmin):
 
 @admin.register(MyOrder)
 class MyOrderAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'receiver_name', 'receiver_phone',
-                    'receiver_division', 'created_at', 'is_confirmed', 'is_canceled', 'is_completed')
+    list_display = ('id', 'total_payable_with_delivery', 'receiver_name', 'receiver_phone',
+                    'receiver_division', 'created_at', 'order_status', 'is_completed')
     fieldsets = (
         ('Receiver Details', {
             'fields': ('receiver_name', 'receiver_phone', 'receiver_other_phone', 'receiver_division', 'receiver_city',
                        'receiver_area', 'receiver_address')
         }),
         ('Product Details', {
-            'fields': ('my_bag', 'user', 'total_product_cost', 'total_payable_with_delivery', 'payment', 'is_confirmed', 'is_canceled'),
-            'readonly_fields': ('total_product_cost', 'total_payable_with_delivery')
+            'fields': ('my_bag', 'user', 'total_product_cost', 'total_payable_with_delivery', 'payment', 'order_status')   
         }),
         ('Conditions', {
             'fields': ('is_processing', 'is_placed', 'is_on_road', 'is_completed')
         }),
     )
-    list_filter = ('created_at', 'is_confirmed', 'is_canceled', 'is_processing', 'is_placed', 'is_on_road',
+    readonly_fields = ('total_product_cost', 'total_payable_with_delivery')
+    list_filter = ('created_at', 'order_status', 'is_processing', 'is_placed', 'is_on_road',
                    'is_completed', 'receiver_division',
                    'receiver_city', 'receiver_area')
     search_fields = ['order_code', 'user', 'receiver_name', 'receiver_phone']

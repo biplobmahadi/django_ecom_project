@@ -73,6 +73,11 @@ PAYMENT_SELECT = (
     ('Cash On Delivery', 'Cash On Delivery'),
 )
 
+ORDER_STATUS_SELECT = (
+    ('confirmed', 'confirmed'),
+    ('cancelled', 'cancelled'),
+)
+
 
 class UserProfile(models.Model):
     id = models.UUIDField(default=uuid.uuid4, editable=False, unique=True, primary_key=True)
@@ -465,8 +470,9 @@ class MyOrder(models.Model):
     receiver_area = models.CharField(max_length=100, choices=AREA_SELECT, blank=True)
     receiver_address = models.TextField(max_length=200, blank=True)
 
-    is_confirmed = models.BooleanField(default=False, help_text='After user confirm by call then it will checked!')
-    is_canceled = models.BooleanField(default=False, help_text='Before is_confirmed checked user can cancel order!')
+    # After user confirm by call then user can't cancel order, before confirm user can cancel
+    # user also filter his cancelled order using this field
+    order_status = models.CharField(max_length=10, choices=ORDER_STATUS_SELECT, blank=True)
 
     payment = models.CharField(max_length=100, choices=PAYMENT_SELECT, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)    # the day when user make order
