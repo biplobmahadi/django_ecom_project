@@ -142,5 +142,5 @@ class MyOrderAdmin(admin.ModelAdmin):
     list_filter = ('created_at', 'order_status', 'is_processing', 'is_placed', 'is_on_road',
                    'is_completed', 'receiver_division',
                    'receiver_city', 'receiver_area')
-    search_fields = ['order_code', 'user', 'receiver_name', 'receiver_phone']
+    search_fields = ['id', 'user', 'receiver_name', 'receiver_phone']
 

@@ -492,7 +492,7 @@ class MyOrder(models.Model):
         return self.my_bag.sub_total + 50
 
     def __str__(self):
-        return f'Code: {self.order_code} -> User: {self.user.username}'
+        return f'Code: {self.id} -> User: {self.user.username}'
 
 
 # this is for carousel
