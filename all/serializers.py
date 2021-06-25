@@ -283,6 +283,8 @@ class MyBagSerializer(serializers.ModelSerializer):
 
 class MyOrderSerializer(serializers.ModelSerializer):
    # user = serializers.ReadOnlyField(source='user.username')
+    total_product_cost = serializers.ReadOnlyField()
+    total_payable_with_delivery = serializers.ReadOnlyField()
 
     class Meta:
         model = MyOrder
